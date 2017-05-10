@@ -1,12 +1,20 @@
 <?php
+$dotEnv = new Dotenv\Dotenv(__DIR__ . '/../');
+$dotEnv->load();
+
 return [
     'settings' => [
-        'displayErrorDetails'    => true, // set to false in production
-        'addContentLengthHeader' => false, // Allow the web server to send the content-length header
+        // set to false in production
+        'displayErrorDetails'    => getenv('SLIM_ENV') !== 'production',
+        // Allow the web server to send the content-length header
+        'addContentLengthHeader' => true,
 
-        // Renderer settings
-        'renderer'               => [
-            'template_path' => __DIR__ . '/../templates/',
+        // database
+        'db'                     => [
+            'host'     => getenv('DB_HOST'),
+            'name'     => getenv('DB_NAME'),
+            'user'     => getenv('DB_USER'),
+            'password' => getenv('DB_PASSWORD'),
         ],
 
         // Monolog settings

@@ -16,9 +16,10 @@ services:
     image: falmar/php:7-fpm-dev
     volumes_from:
       - ds
-#    networks:
-#      - sql
+    networks:
+      - default
+      - sql
 
-#networks:
-#  sql:
-#    external: true
+networks:
+  sql:
+    external: true
