@@ -1,0 +1,24 @@
+version: '2'
+
+services:
+  ds:
+    image: alpine:3.4
+    command: sh
+    volumes:
+      - ./:/usr/share/nginx/html
+  nginx:
+    image: falmar/nginx:public
+    links: ["php:php_app"]
+    ports: ["8080:80"]
+    volumes_from:
+      - ds
+  php:
+    image: falmar/php:7-fpm-dev
+    volumes_from:
+      - ds
+#    networks:
+#      - sql
+
+#networks:
+#  sql:
+#    external: true
