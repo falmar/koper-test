@@ -26,12 +26,7 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
         // class to test
         $model = new Products($container);
 
-        $params = [
-            'limit'     => 0,
-            'offset'    => 0,
-            'sortField' => '',
-            'sortOrder' => ''
-        ];
+        $params = $this->getDataDefaultParams();
 
         // test data
         $model->getData($params);
@@ -50,12 +45,7 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
         // class to test
         $model = new Products($container);
 
-        $params = [
-            'limit'     => 5,
-            'offset'    => 0,
-            'sortField' => '',
-            'sortOrder' => ''
-        ];
+        $params = $this->getDataDefaultParams(['limit' => 5]);
 
         // test data
         $model->getData($params);
@@ -74,12 +64,10 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
         // class to test
         $model = new Products($container);
 
-        $params = [
-            'limit'     => 5,
-            'offset'    => 20,
-            'sortField' => '',
-            'sortOrder' => ''
-        ];
+        $params = $this->getDataDefaultParams([
+            'limit'  => 5,
+            'offset' => 20
+        ]);
 
         // test data
         $model->getData($params);
@@ -98,12 +86,7 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
         // class to test
         $model = new Products($container);
 
-        $params = [
-            'limit'     => 0,
-            'offset'    => 20,
-            'sortField' => '',
-            'sortOrder' => ''
-        ];
+        $params = $this->getDataDefaultParams(['offset' => 20]);
 
         // test data
         $model->getData($params);
@@ -122,18 +105,22 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
         // class to test
         $model = new Products($container);
 
-        $params = [
-            'limit'     => 0,
-            'offset'    => 0,
+        // get params
+        $params = $this->getDataDefaultParams([
             'sortField' => 'name',
-            'sortOrder' => 'ASC'
-        ];
+            'sortOrder' => 'ASC',
+        ]);
 
         // test data
         $model->getData($params);
 
-        $params['sortField'] = 'id';
-        $params['sortOrder'] = 'DESC';
+        // get params
+        $params = $this->getDataDefaultParams([
+            'sortField' => 'id',
+            'sortOrder' => 'DESC',
+        ]);
+
+        // test data
         $model->getData($params);
 
         $this->assertEquals($dbh->getPrepareCallCount(), 2);
@@ -151,12 +138,7 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
         // class to test
         $model = new Products($container);
 
-        $params = [
-            'limit'     => 0,
-            'offset'    => 0,
-            'sortField' => 'name',
-            'sortOrder' => ''
-        ];
+        $params = $this->getDataDefaultParams(['sortField' => 'name']);
 
         // test data
         $model->getData($params);
@@ -186,16 +168,19 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
 
         $model = new Products($container);
 
-        $params = [
+        $model->getData($this->getDataDefaultParams());
+
+        $this->assertEquals($stmt->getExecuteCallCount(), 1);
+        $this->assertEquals($stmt->getExecuteParams(0), [null]);
+    }
+
+    protected function getDataDefaultParams(array $arr = [])
+    {
+        return array_merge([
             'limit'     => 0,
             'offset'    => 0,
             'sortField' => 'name',
             'sortOrder' => ''
-        ];
-
-        $model->getData($params);
-
-        $this->assertEquals($stmt->getExecuteCallCount(), 1);
-        $this->assertEquals($stmt->getExecuteParams(0), [null]);
+        ], $arr);
     }
 }
