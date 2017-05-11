@@ -29,8 +29,8 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
         // test data
         $model->getData($this->getDataDefaultParams());
 
-        $this->assertEquals($dbh->getPrepareCallCount(), 1);
-        $this->assertEquals($dbh->getPrepareParams(0), ['SELECT id, name FROM products;', null]);
+        $this->assertEquals(1, $dbh->getPrepareCallCount());
+        $this->assertEquals(['SELECT id, name FROM products;', null], $dbh->getPrepareParams(0));
     }
 
     public function testGetDataWithLimit()
@@ -48,8 +48,8 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
         // test data
         $model->getData($params);
 
-        $this->assertEquals($dbh->getPrepareCallCount(), 1);
-        $this->assertEquals($dbh->getPrepareParams(0), ['SELECT id, name FROM products LIMIT 5;', null]);
+        $this->assertEquals(1, $dbh->getPrepareCallCount());
+        $this->assertEquals(['SELECT id, name FROM products LIMIT 5;', null], $dbh->getPrepareParams(0));
     }
 
     public function testGetDataWithLimitAndOffset()
@@ -70,8 +70,8 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
         // test data
         $model->getData($params);
 
-        $this->assertEquals($dbh->getPrepareCallCount(), 1);
-        $this->assertEquals($dbh->getPrepareParams(0), ['SELECT id, name FROM products LIMIT 5 OFFSET 20;', null]);
+        $this->assertEquals(1, $dbh->getPrepareCallCount());
+        $this->assertEquals(['SELECT id, name FROM products LIMIT 5 OFFSET 20;', null], $dbh->getPrepareParams(0));
     }
 
     public function testGetDataWithOffsetNoLimit()
@@ -89,8 +89,8 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
         // test data
         $model->getData($params);
 
-        $this->assertEquals($dbh->getPrepareCallCount(), 1);
-        $this->assertEquals($dbh->getPrepareParams(0), ['SELECT id, name FROM products;', null]);
+        $this->assertEquals(1, $dbh->getPrepareCallCount());
+        $this->assertEquals(['SELECT id, name FROM products;', null], $dbh->getPrepareParams(0));
     }
 
     public function testGetDataWithSortFieldAndOrder()
@@ -121,9 +121,9 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
         // test data
         $model->getData($params);
 
-        $this->assertEquals($dbh->getPrepareCallCount(), 2);
-        $this->assertEquals($dbh->getPrepareParams(0), ['SELECT id, name FROM products ORDER BY name ASC;', null]);
-        $this->assertEquals($dbh->getPrepareParams(1), ['SELECT id, name FROM products ORDER BY id DESC;', null]);
+        $this->assertEquals(2, $dbh->getPrepareCallCount());
+        $this->assertEquals(['SELECT id, name FROM products ORDER BY name ASC;', null], $dbh->getPrepareParams(0));
+        $this->assertEquals(['SELECT id, name FROM products ORDER BY id DESC;', null], $dbh->getPrepareParams(1));
     }
 
     public function testGetDataWithOnlyOneSortFieldOrOrder()
@@ -146,9 +146,9 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
 
         $model->getData($params);
 
-        $this->assertEquals($dbh->getPrepareCallCount(), 2);
-        $this->assertEquals($dbh->getPrepareParams(0), ['SELECT id, name FROM products;', null]);
-        $this->assertEquals($dbh->getPrepareParams(1), ['SELECT id, name FROM products;', null]);
+        $this->assertEquals(2, $dbh->getPrepareCallCount());
+        $this->assertEquals(['SELECT id, name FROM products;', null], $dbh->getPrepareParams(0));
+        $this->assertEquals(['SELECT id, name FROM products;', null], $dbh->getPrepareParams(1));
     }
 
     public function testGetDataCallExecuteStatement()
@@ -166,8 +166,8 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
 
         $model->getData($this->getDataDefaultParams());
 
-        $this->assertEquals($stmt->getExecuteCallCount(), 1);
-        $this->assertEquals($stmt->getExecuteParams(0), [null]);
+        $this->assertEquals(1, $stmt->getExecuteCallCount());
+        $this->assertEquals([null], $stmt->getExecuteParams(0));
     }
 
     public function testGetDataCallFetchWidthAssoc()
@@ -187,11 +187,11 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
 
         $result = $model->getData($this->getDataDefaultParams());
 
-        $this->assertEquals($stmt->getFetchCallCount(), 3);
-        $this->assertEquals($stmt->getFetchParams(0), [\PDO::FETCH_ASSOC, \PDO::FETCH_ORI_NEXT, 0]);
-        $this->assertEquals($stmt->getFetchParams(1), [\PDO::FETCH_ASSOC, \PDO::FETCH_ORI_NEXT, 0]);
-        $this->assertEquals($stmt->getFetchParams(2), [\PDO::FETCH_ASSOC, \PDO::FETCH_ORI_NEXT, 0]);
-        $this->assertEquals($result, [true, true]);
+        $this->assertEquals(3, $stmt->getFetchCallCount());
+        $this->assertEquals([\PDO::FETCH_ASSOC, \PDO::FETCH_ORI_NEXT, 0], $stmt->getFetchParams(0));
+        $this->assertEquals([\PDO::FETCH_ASSOC, \PDO::FETCH_ORI_NEXT, 0], $stmt->getFetchParams(1));
+        $this->assertEquals([\PDO::FETCH_ASSOC, \PDO::FETCH_ORI_NEXT, 0], $stmt->getFetchParams(2));
+        $this->assertEquals([true, true], $result);
     }
 
     protected function getDataDefaultParams(array $arr = [])
