@@ -19,7 +19,7 @@ class PDOStatement extends \PDOStatement
      *  constructor.
      * @param array $expectations
      */
-    public function __construct(array $expectations)
+    public function __construct(array $expectations = [])
     {
         // set properties
         foreach ($expectations as $k => $prop) {
@@ -42,7 +42,7 @@ class PDOStatement extends \PDOStatement
 
         $this->executeParams[] = [$params];
 
-        if (isset($this->executeReturn[$this->executeCallCount])) {
+        if (count($this->executeReturn) && isset($this->executeReturn[$this->executeCallCount])) {
             $result = $this->executeReturn[$this->executeCallCount];
         }
 

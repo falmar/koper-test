@@ -13,14 +13,14 @@ class PDO extends \PDO
 {
     // prepare
     protected $prepareCallCount = 0;
-    protected $prepareCalls = [];
+    protected $prepareParams = [];
     protected $prepareReturn = [];
 
     /**
      *  constructor.
      * @param array $expectations
      */
-    public function __construct(array $expectations)
+    public function __construct(array $expectations = [])
     {
         // set properties
         foreach ($expectations as $k => $prop) {
@@ -32,33 +32,9 @@ class PDO extends \PDO
 
     public function prepare($string, $options = null)
     {
-        if (count($this->prepareCalls) && isset($this->prepareCalls[$this->prepareCallCount])) {
-            $expectedParams = $this->prepareCalls[$this->prepareCallCount];
-
-            if (count($expectedParams) !== 2) {
-                throw new \Exception("Invalid expectation arguments amount for prepare call");
-            }
-
-            if ($expectedParams[0] !== $string) {
-                $expected = var_export($expectedParams[0], true);
-                $received = var_export($string, true);
-
-                throw new \Exception("
-                        \n Invalid 'string' argument for prepare call: \n Expected: {$expected} \n Received: {$received}"
-                );
-            }
-
-            if ($expectedParams[1] !== $options) {
-                $expected = var_export($expectedParams[1], true);
-                $received = var_export($options, true);
-
-                throw new \Exception("
-                        \n Invalid 'options' argument for prepare call: \n Expected: {$expected} \n Received: {$received}"
-                );
-            }
-        }
-
         $result = new PDOStatement([]);
+
+        $this->prepareParams[] = [$string, $options];
 
         if (count($this->prepareReturn) && isset($this->prepareReturn[$this->prepareCallCount])) {
             $result = $this->prepareReturn[$this->prepareCallCount];
@@ -69,8 +45,55 @@ class PDO extends \PDO
         return $result;
     }
 
+    /**
+     * Get parameters used for  the  specified method call
+     * @param int $call
+     * @return array
+     * @throws \Exception if params not found for specified call
+     */
+    public function getPrepareParams($call)
+    {
+        if (!isset($this->prepareParams[$call])) {
+            throw new \Exception('No params found for the current call: ' . $call);
+        }
+
+        return $this->prepareParams[$call];
+    }
+
+    /**
+     * Return all the params for the past method calls
+     * @return array
+     */
+    public function getPrepareParamsAll()
+    {
+        return $this->prepareParams;
+    }
+
+    /**
+     * Set return values for the prepare method calls
+     * @param array $returns
+     */
+    public function setPrepareReturn(array $returns = [])
+    {
+        $this->prepareReturn = $returns;
+    }
+
+    /**
+     * Returns the amount of times the prepare method was called
+     * @return int
+     */
     public function getPrepareCallCount()
     {
         return $this->prepareCallCount;
+    }
+
+    /**
+     * Reset abouts prepare method
+     */
+    public function resetPrepare()
+    {
+        $this->prepareCallCount = 0;
+        $this->prepareParams    = [];
+        $this->prepareReturn    = [];
     }
 }
