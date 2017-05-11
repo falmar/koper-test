@@ -11,8 +11,6 @@ namespace KoperTest\Mocks\PDO;
 
 class PDO extends \PDO
 {
-// PDOStatement Mock
-    protected $PDOStatement = null;
     // prepare
     protected $prepareCallCount = 0;
     protected $prepareCalls = [];
@@ -34,54 +32,46 @@ class PDO extends \PDO
 
     public function prepare($string, $options = null)
     {
-        if (!$this->PDOStatement instanceof \PDOStatement) {
-            throw new \Exception('No PDOStatementMock has been set');
-        }
+        if (count($this->prepareCalls) && isset($this->prepareCalls[$this->prepareCallCount])) {
+            $expectedParams = $this->prepareCalls[$this->prepareCallCount];
 
-        if (!count($this->prepareCalls)) {
-            throw new \Exception('No prepareExpectations has been set');
-        }
+            if (count($expectedParams) !== 2) {
+                throw new \Exception("Invalid expectation arguments amount for prepare call");
+            }
 
-        if (!isset($this->prepareCalls[$this->prepareCallCount])) {
-            throw new \Exception("No expectation available for the current prepare call: {$this->prepareCallCount}");
-        }
+            if ($expectedParams[0] !== $string) {
+                $expected = var_export($expectedParams[0], true);
+                $received = var_export($string, true);
 
-        $expectedParams = $this->prepareCalls[$this->prepareCallCount];
-
-        if (count($expectedParams) !== 2) {
-            throw new \Exception("Invalid expectation arguments amount for prepare call");
-        }
-
-        if ($expectedParams[0] !== $string) {
-            $expected = var_export($expectedParams[0], true);
-            $received = var_export($string, true);
-
-            throw new \Exception("
+                throw new \Exception("
                         \n Invalid 'string' argument for prepare call: \n Expected: {$expected} \n Received: {$received}"
-            );
+                );
+            }
+
+            if ($expectedParams[1] !== $options) {
+                $expected = var_export($expectedParams[1], true);
+                $received = var_export($options, true);
+
+                throw new \Exception("
+                        \n Invalid 'options' argument for prepare call: \n Expected: {$expected} \n Received: {$received}"
+                );
+            }
         }
 
-        if ($expectedParams[1] !== $options) {
-            $expected = var_export($expectedParams[1], true);
-            $received = var_export($options, true);
 
-            throw new \Exception("
-                        \n Invalid 'options' argument for prepare call: \n Expected: {$expected} \n Received: {$received}"
-            );
+        if (count($this->prepareReturn) && isset($this->prepareReturn[$this->prepareCallCount])) {
+            $this->prepareCallCount++;
+
+            return $this->prepareReturn[$this->prepareCallCount];
         }
 
         $this->prepareCallCount++;
 
-        return $this->PDOStatement;
+        return new PDOStatement([]);
     }
 
     public function getPrepareCallCount()
     {
         return $this->prepareCallCount;
-    }
-
-    public function setStatement(\PDOStatement $stmt)
-    {
-        $this->PDOStatement = $stmt;
     }
 }

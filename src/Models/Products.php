@@ -26,6 +26,7 @@ class Products
      */
     public function getData($params)
     {
+        /** @var \PDO $dbh */
         $dbh      = $this->container->get('dbh');
         $results  = [];
         $limitStr = '';
@@ -47,6 +48,8 @@ class Products
         }
 
         $ssql = "SELECT id, name FROM products" . $orderStr . $limitStr . ";";
+
+        /** @var \PDOStatement $stmt */
         $stmt = $dbh->prepare($ssql);
 
         $stmt->execute();
