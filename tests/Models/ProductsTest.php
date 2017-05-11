@@ -26,10 +26,8 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
         // class to test
         $model = new Products($container);
 
-        $params = $this->getDataDefaultParams();
-
         // test data
-        $model->getData($params);
+        $model->getData($this->getDataDefaultParams());
 
         $this->assertEquals($dbh->getPrepareCallCount(), 1);
         $this->assertEquals($dbh->getPrepareParams(0), ['SELECT id, name FROM products;', null]);
@@ -162,9 +160,7 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
             'prepareReturn' => [$stmt]
         ]);
         // DI Conainer
-        $container = new Container([
-            'dbh' => $dbh
-        ]);
+        $container = new Container(['dbh' => $dbh]);
 
         $model = new Products($container);
 
@@ -172,6 +168,30 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($stmt->getExecuteCallCount(), 1);
         $this->assertEquals($stmt->getExecuteParams(0), [null]);
+    }
+
+    public function testGetDataCallFetchWidthAssoc()
+    {
+        // PDOStatement Expectations
+        $stmt = new PDOStatement([
+            'fetchReturn' => [true, true, false]
+        ]);
+        // PDO Expectations
+        $dbh = new PDO([
+            'prepareReturn' => [$stmt]
+        ]);
+        // DI Conainer
+        $container = new Container(['dbh' => $dbh]);
+
+        $model = new Products($container);
+
+        $result = $model->getData($this->getDataDefaultParams());
+
+        $this->assertEquals($stmt->getFetchCallCount(), 3);
+        $this->assertEquals($stmt->getFetchParams(0), [\PDO::FETCH_ASSOC, \PDO::FETCH_ORI_NEXT, 0]);
+        $this->assertEquals($stmt->getFetchParams(1), [\PDO::FETCH_ASSOC, \PDO::FETCH_ORI_NEXT, 0]);
+        $this->assertEquals($stmt->getFetchParams(2), [\PDO::FETCH_ASSOC, \PDO::FETCH_ORI_NEXT, 0]);
+        $this->assertEquals($result, [true, true]);
     }
 
     protected function getDataDefaultParams(array $arr = [])

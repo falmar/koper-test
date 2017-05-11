@@ -15,6 +15,10 @@ class PDOStatement extends \PDOStatement
     protected $executeParams = [];
     protected $executeReturn = [];
 
+    protected $fetchCallCount = 0;
+    protected $fetchParams = [];
+    protected $fetchReturn = [];
+
     /**
      *  constructor.
      * @param array $expectations
@@ -28,6 +32,8 @@ class PDOStatement extends \PDOStatement
             }
         }
     }
+
+    // ------------------------- execute
 
     /**
      * briefly simulates execute method call
@@ -99,5 +105,81 @@ class PDOStatement extends \PDOStatement
         $this->executeCallCount = 0;
         $this->executeParams    = [];
         $this->executeReturn    = [];
+    }
+
+    // ------------------------- fetch
+
+    /**
+     * briefly simulates fetch method call
+     * @param null $fetchStyle
+     * @param int $orientation
+     * @param int $offset
+     * @return mixed
+     */
+    public function fetch($fetchStyle = null, $orientation = \PDO::FETCH_ORI_NEXT, $offset = 0)
+    {
+        $result = false;
+
+        $this->fetchParams[] = [$fetchStyle, $orientation, $offset];
+
+        if (count($this->fetchReturn) && isset($this->fetchReturn[$this->fetchCallCount])) {
+            $result = $this->fetchReturn[$this->fetchCallCount];
+        }
+
+        $this->fetchCallCount++;
+
+        return $result;
+    }
+
+    /**
+     * Get parameters used for  the  specified method call
+     * @param int $call
+     * @return array
+     * @throws \Exception if params not found for specified call
+     */
+    public function getFetchParams($call)
+    {
+        if (!isset($this->fetchParams[$call])) {
+            throw new \Exception('No params found for the current call: ' . $call);
+        }
+
+        return $this->fetchParams[$call];
+    }
+
+    /**
+     * Return all the params for the past method calls
+     * @return array
+     */
+    public function getFetchParamsAll()
+    {
+        return $this->fetchParams;
+    }
+
+    /**
+     * Set return values for the fetch method calls
+     * @param array $returns
+     */
+    public function setFetchReturn(array $returns = [])
+    {
+        $this->fetchReturn = $returns;
+    }
+
+    /**
+     * Returns the amount of times the fetch method was called
+     * @return int
+     */
+    public function getFetchCallCount()
+    {
+        return $this->fetchCallCount;
+    }
+
+    /**
+     * Reset abouts fetch method
+     */
+    public function resetFetch()
+    {
+        $this->fetchCallCount = 0;
+        $this->fetchParams    = [];
+        $this->fetchReturn    = [];
     }
 }
