@@ -23,10 +23,8 @@ class PDOStatement extends \PDOStatement
     {
         // set properties
         foreach ($expectations as $k => $prop) {
-            $propKey = $k . 'Expectations';
-
-            if (property_exists(__CLASS__, $propKey)) {
-                $this->$propKey = $prop;
+            if (property_exists(__CLASS__, $k)) {
+                $this->$k = $prop;
             }
         }
     }
