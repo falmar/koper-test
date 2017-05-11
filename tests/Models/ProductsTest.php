@@ -209,11 +209,7 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
     public function testGetDataCallExecuteStatement()
     {
         // PDOStatement Expectations
-        $stmt = new PDOStatement([
-            'executeCalls' => [
-                []
-            ]
-        ]);
+        $stmt = new PDOStatement([]);
         // PDO Expectations
         $dbh = new PDO([
             'prepareReturn' => [$stmt]
@@ -235,5 +231,6 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
         $model->getData($params);
 
         $this->assertEquals($stmt->getExecuteCallCount(), 1);
+        $this->assertEquals($stmt->getExecuteParams(0), [null]);
     }
 }
