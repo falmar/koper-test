@@ -194,6 +194,29 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals([true, true], $result);
     }
 
+    public function testGetDataResult()
+    {
+        $stmt  = new PDOStatement([
+            'fetchReturn' => [
+                ['id' => 1, 'name' => 'MX-4 Thermal Compound'],
+                ['id' => 2, 'name' => 'ArtiClean 1 & 2 30ml']
+            ]
+        ]);
+        $dbh   = new PDO([
+            'prepareReturn' => [$stmt]
+        ]);
+        $model = new Products(new Container(['dbh' => $dbh]));
+
+        $expectedResult = [
+            ['id' => 1, 'name' => 'MX-4 Thermal Compound'],
+            ['id' => 2, 'name' => 'ArtiClean 1 & 2 30ml']
+        ];
+
+        $result = $model->getData($this->getDataDefaultParams());
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
     protected function getDataDefaultParams(array $arr = [])
     {
         return array_merge([
