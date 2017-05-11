@@ -1,0 +1,16 @@
+
+language: php
+
+php:
+  - "7"
+  - "5.6"
+
+cache:
+  directories:
+    - vendor
+
+script:
+  - phpunit
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
