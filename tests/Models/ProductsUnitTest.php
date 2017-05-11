@@ -15,9 +15,9 @@ use KoperTest\Mocks\PDO\PDO;
 use KoperTest\Mocks\PDO\PDOStatement;
 
 
-class ProductsTest extends \PHPUnit_Framework_TestCase
+class ProductsUnitTest extends \PHPUnit_Framework_TestCase
 {
-    public function testGetDataWithEmptyParams()
+    public function testGetListWithEmptyParams()
     {
         // PDO Expectations
         $dbh = new PDO();
@@ -27,13 +27,13 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
         $model = new Products($container);
 
         // test data
-        $model->getData($this->getDataDefaultParams());
+        $model->getList($this->getDataDefaultParams());
 
         $this->assertEquals(1, $dbh->getPrepareCallCount());
         $this->assertEquals(['SELECT id, name FROM products;', null], $dbh->getPrepareParams(0));
     }
 
-    public function testGetDataWithLimit()
+    public function testGetListWithLimit()
     {
         // PDO Expectations
         $dbh = new PDO();
@@ -46,13 +46,13 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
         $params = $this->getDataDefaultParams(['limit' => 5]);
 
         // test data
-        $model->getData($params);
+        $model->getList($params);
 
         $this->assertEquals(1, $dbh->getPrepareCallCount());
         $this->assertEquals(['SELECT id, name FROM products LIMIT 5;', null], $dbh->getPrepareParams(0));
     }
 
-    public function testGetDataWithLimitAndOffset()
+    public function testGetListWithLimitAndOffset()
     {
         // PDO Expectations
         $dbh = new PDO();
@@ -68,13 +68,13 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
         ]);
 
         // test data
-        $model->getData($params);
+        $model->getList($params);
 
         $this->assertEquals(1, $dbh->getPrepareCallCount());
         $this->assertEquals(['SELECT id, name FROM products LIMIT 5 OFFSET 20;', null], $dbh->getPrepareParams(0));
     }
 
-    public function testGetDataWithOffsetNoLimit()
+    public function testGetListWithOffsetNoLimit()
     {
         // PDO Expectations
         $dbh = new PDO();
@@ -87,13 +87,13 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
         $params = $this->getDataDefaultParams(['offset' => 20]);
 
         // test data
-        $model->getData($params);
+        $model->getList($params);
 
         $this->assertEquals(1, $dbh->getPrepareCallCount());
         $this->assertEquals(['SELECT id, name FROM products;', null], $dbh->getPrepareParams(0));
     }
 
-    public function testGetDataWithSortFieldAndOrder()
+    public function testGetListWithSortFieldAndOrder()
     {
         // PDO Expectations
         $dbh = new PDO();
@@ -110,7 +110,7 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
         ]);
 
         // test data
-        $model->getData($params);
+        $model->getList($params);
 
         // get params
         $params = $this->getDataDefaultParams([
@@ -119,14 +119,14 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
         ]);
 
         // test data
-        $model->getData($params);
+        $model->getList($params);
 
         $this->assertEquals(2, $dbh->getPrepareCallCount());
         $this->assertEquals(['SELECT id, name FROM products ORDER BY name ASC;', null], $dbh->getPrepareParams(0));
         $this->assertEquals(['SELECT id, name FROM products ORDER BY id DESC;', null], $dbh->getPrepareParams(1));
     }
 
-    public function testGetDataWithOnlyOneSortFieldOrOrder()
+    public function testGetListWithOnlyOneSortFieldOrOrder()
     {
         // PDO Expectations
         $dbh = new PDO();
@@ -139,19 +139,19 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
         $params = $this->getDataDefaultParams(['sortField' => 'name']);
 
         // test data
-        $model->getData($params);
+        $model->getList($params);
 
         $params['sortField'] = '';
         $params['sortOrder'] = 'DESC';
 
-        $model->getData($params);
+        $model->getList($params);
 
         $this->assertEquals(2, $dbh->getPrepareCallCount());
         $this->assertEquals(['SELECT id, name FROM products;', null], $dbh->getPrepareParams(0));
         $this->assertEquals(['SELECT id, name FROM products;', null], $dbh->getPrepareParams(1));
     }
 
-    public function testGetDataCallExecuteStatement()
+    public function testGetListCallExecuteStatement()
     {
         // PDOStatement Expectations
         $stmt = new PDOStatement();
@@ -164,13 +164,13 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
 
         $model = new Products($container);
 
-        $model->getData($this->getDataDefaultParams());
+        $model->getList($this->getDataDefaultParams());
 
         $this->assertEquals(1, $stmt->getExecuteCallCount());
         $this->assertEquals([null], $stmt->getExecuteParams(0));
     }
 
-    public function testGetDataCallFetchWidthAssoc()
+    public function testGetListCallFetchWidthAssoc()
     {
         // PDOStatement Expectations
         $stmt = new PDOStatement([
@@ -185,7 +185,7 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
 
         $model = new Products($container);
 
-        $result = $model->getData($this->getDataDefaultParams());
+        $result = $model->getList($this->getDataDefaultParams());
 
         $this->assertEquals(3, $stmt->getFetchCallCount());
         $this->assertEquals([\PDO::FETCH_ASSOC, \PDO::FETCH_ORI_NEXT, 0], $stmt->getFetchParams(0));
@@ -194,7 +194,7 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals([true, true], $result);
     }
 
-    public function testGetDataResult()
+    public function testGetListResult()
     {
         $stmt  = new PDOStatement([
             'fetchReturn' => [
@@ -212,10 +212,12 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
             ['id' => 2, 'name' => 'ArtiClean 1 & 2 30ml']
         ];
 
-        $result = $model->getData($this->getDataDefaultParams());
+        $result = $model->getList($this->getDataDefaultParams());
 
         $this->assertEquals($expectedResult, $result);
     }
+
+    // helper
 
     protected function getDataDefaultParams(array $arr = [])
     {

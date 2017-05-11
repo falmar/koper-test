@@ -24,7 +24,7 @@ class Products
      * @param array $params
      * @return array
      */
-    public function getData($params)
+    public function getList(array $params) : array
     {
         /** @var \PDO $dbh */
         $dbh      = $this->container->get('dbh');
