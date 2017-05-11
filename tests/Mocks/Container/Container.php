@@ -11,7 +11,7 @@ namespace KoperTest\Mocks\Container;
 
 use Psr\Container\ContainerInterface;
 
-class ContainerMock implements ContainerInterface
+class Container implements ContainerInterface
 {
     protected $data = [];
     protected $called = [];

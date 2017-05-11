@@ -9,7 +9,7 @@
 namespace KoperTest\Mocks\PDO;
 
 
-class PDOMock extends \PDO
+class PDO extends \PDO
 {
 // PDOStatement Mock
     protected $PDOStatement = null;

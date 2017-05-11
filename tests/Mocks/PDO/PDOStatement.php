@@ -9,7 +9,7 @@
 namespace KoperTest\Mocks\PDO;
 
 
-class PDOStatementMock extends \PDOStatement
+class PDOStatement extends \PDOStatement
 {
     /**
      *  constructor.

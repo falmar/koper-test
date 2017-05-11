@@ -10,9 +10,9 @@ namespace Tests\Products;
 
 
 use KoperTest\Controllers\Products\ProductList;
-use KoperTest\Mocks\Container\ContainerMock;
-use KoperTest\Mocks\PDO\PDOMock;
-use KoperTest\Mocks\PDO\PDOStatementMock;
+use KoperTest\Mocks\Container\Container;
+use KoperTest\Mocks\PDO\PDO;
+use KoperTest\Mocks\PDO\PDOStatement;
 
 
 class ProductListTest extends \PHPUnit_Framework_TestCase
@@ -20,9 +20,9 @@ class ProductListTest extends \PHPUnit_Framework_TestCase
     public function testGetDataWithEmptyParams()
     {
         // PDOStatement Expectations
-        $stmt = new PDOStatementMock([]);
+        $stmt = new PDOStatement([]);
         // PDO Expectations
-        $dbh = new PDOMock([
+        $dbh = new PDO([
             'PDOStatement' => $stmt,
 
             'prepareCalls' => [
@@ -30,7 +30,7 @@ class ProductListTest extends \PHPUnit_Framework_TestCase
             ]
         ]);
         // DI Container
-        $container = new ContainerMock([
+        $container = new Container([
             'dbh' => $dbh
         ]);
 
@@ -53,9 +53,9 @@ class ProductListTest extends \PHPUnit_Framework_TestCase
     public function testGetDataWithLimit()
     {
         // PDOStatement Expectations
-        $stmt = new PDOStatementMock([]);
+        $stmt = new PDOStatement([]);
         // PDO Expectations
-        $dbh = new PDOMock([
+        $dbh = new PDO([
             'PDOStatement' => $stmt,
 
             'prepareCalls' => [
@@ -63,7 +63,7 @@ class ProductListTest extends \PHPUnit_Framework_TestCase
             ]
         ]);
         // DI Container
-        $container = new ContainerMock([
+        $container = new Container([
             'dbh' => $dbh
         ]);
 
@@ -86,9 +86,9 @@ class ProductListTest extends \PHPUnit_Framework_TestCase
     public function testGetDataWithLimitAndOffset()
     {
         // PDOStatement Expectations
-        $stmt = new PDOStatementMock([]);
+        $stmt = new PDOStatement([]);
         // PDO Expectations
-        $dbh = new PDOMock([
+        $dbh = new PDO([
             'PDOStatement' => $stmt,
 
             'prepareCalls' => [
@@ -96,7 +96,7 @@ class ProductListTest extends \PHPUnit_Framework_TestCase
             ]
         ]);
         // DI Container
-        $container = new ContainerMock([
+        $container = new Container([
             'dbh' => $dbh
         ]);
 
@@ -119,9 +119,9 @@ class ProductListTest extends \PHPUnit_Framework_TestCase
     public function testGetDataWithOffsetNoLimit()
     {
         // PDOStatement Expectations
-        $stmt = new PDOStatementMock([]);
+        $stmt = new PDOStatement([]);
         // PDO Expectations
-        $dbh = new PDOMock([
+        $dbh = new PDO([
             'PDOStatement' => $stmt,
 
             'prepareCalls' => [
@@ -129,7 +129,7 @@ class ProductListTest extends \PHPUnit_Framework_TestCase
             ]
         ]);
         // DI Container
-        $container = new ContainerMock([
+        $container = new Container([
             'dbh' => $dbh
         ]);
 
@@ -152,9 +152,9 @@ class ProductListTest extends \PHPUnit_Framework_TestCase
     public function testGetDataWithSortFieldAndOrder()
     {
         // PDOStatement Expectations
-        $stmt = new PDOStatementMock([]);
+        $stmt = new PDOStatement([]);
         // PDO Expectations
-        $dbh = new PDOMock([
+        $dbh = new PDO([
             'PDOStatement' => $stmt,
 
             'prepareCalls' => [
@@ -163,7 +163,7 @@ class ProductListTest extends \PHPUnit_Framework_TestCase
             ]
         ]);
         // DI Container
-        $container = new ContainerMock([
+        $container = new Container([
             'dbh' => $dbh
         ]);
 
@@ -192,9 +192,9 @@ class ProductListTest extends \PHPUnit_Framework_TestCase
     public function testGetDataWithOnlyOneSortFieldOrOrder()
     {
         // PDOStatement Expectations
-        $stmt = new PDOStatementMock([]);
+        $stmt = new PDOStatement([]);
         // PDO Expectations
-        $dbh = new PDOMock([
+        $dbh = new PDO([
             'PDOStatement' => $stmt,
 
             'prepareCalls' => [
@@ -203,7 +203,7 @@ class ProductListTest extends \PHPUnit_Framework_TestCase
             ]
         ]);
         // DI Container
-        $container = new ContainerMock([
+        $container = new Container([
             'dbh' => $dbh
         ]);
 
