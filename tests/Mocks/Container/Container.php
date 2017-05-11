@@ -27,18 +27,20 @@ class Container implements ContainerInterface
             throw new \Exception("Container id '{$id}' does not exist");
         }
 
-        $callable = is_callable($this->data[$id]);
-
-        if ($callable && !isset($this->called[$id])) {
-            $this->data[$id]   = $this->data[$id]();
+        if (is_callable($this->data[$id]) && !isset($this->called[$id])) {
+            $this->data[$id]   = $this->data[$id]($this);
             $this->called[$id] = true;
         }
 
         return $this->data[$id];
     }
 
+    /**
+     * @param string $id
+     * @return bool
+     */
     public function has($id)
     {
-
+        return !isset($this->data[$id]);
     }
 }
