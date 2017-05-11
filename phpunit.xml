@@ -1,7 +1,18 @@
-<phpunit bootstrap="vendor/autoload.php">
+<phpunit colors="true"
+         verbose="true"
+         bootstrap="vendor/autoload.php">
     <testsuites>
         <testsuite name="Models">
             <directory>tests/Models</directory>
         </testsuite>
     </testsuites>
+    <filter>
+        <whitelist>
+            <directory>src/Controllers</directory>
+            <directory>src/Models</directory>
+        </whitelist>
+    </filter>
+    <logging>
+        <log type="coverage-clover" target="clover.xml"/>
+    </logging>
 </phpunit>
