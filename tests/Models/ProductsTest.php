@@ -159,7 +159,7 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
         $dbh = new PDO([
             'prepareReturn' => [$stmt]
         ]);
-        // DI Conainer
+        // DI Container
         $container = new Container(['dbh' => $dbh]);
 
         $model = new Products($container);
@@ -180,7 +180,7 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
         $dbh = new PDO([
             'prepareReturn' => [$stmt]
         ]);
-        // DI Conainer
+        // DI Container
         $container = new Container(['dbh' => $dbh]);
 
         $model = new Products($container);
