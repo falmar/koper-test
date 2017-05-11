@@ -14,6 +14,7 @@ use Psr\Container\ContainerInterface;
 class ContainerMock implements ContainerInterface
 {
     protected $data = [];
+    protected $called = [];
 
     public function __construct($data)
     {
@@ -24,6 +25,13 @@ class ContainerMock implements ContainerInterface
     {
         if (!isset($this->data[$id])) {
             throw new \Exception("Container id '{$id}' does not exist");
+        }
+
+        $callable = is_callable($this->data[$id]);
+
+        if ($callable && !isset($this->called[$id])) {
+            $this->data[$id]   = $this->data[$id]();
+            $this->called[$id] = true;
         }
 
         return $this->data[$id];

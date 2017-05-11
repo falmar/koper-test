@@ -30,7 +30,9 @@ class ProductListTest extends \PHPUnit_Framework_TestCase
             ]
         ]);
         // DI Container
-        $container = new ContainerMock(['dbh' => $dbh]);
+        $container = new ContainerMock([
+            'dbh' => $dbh
+        ]);
 
         // class to test
         $productList = new ProductList($container);
