@@ -41,6 +41,11 @@ class PDOStatement extends \PDOStatement
         $result = true;
 
         $this->executeParams[] = [$params];
+
+        if (isset($this->executeReturn[$this->executeCallCount])) {
+            $result = $this->executeReturn[$this->executeCallCount];
+        }
+
         $this->executeCallCount++;
 
         return $result;
