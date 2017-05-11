@@ -25,44 +25,4 @@ class ProductList
         /** @var Logger $logger */
         $logger = $this->container->get('logger');
     }
-
-    /**
-     * @param array $params
-     * @return array
-     */
-    public function getData($params)
-    {
-        $dbh      = $this->container->get('dbh');
-        $results  = [];
-        $limitStr = '';
-        $orderStr = '';
-
-        $limit     = $params['limit'];
-        $offset    = $params['offset'];
-        $sortField = $params['sortField'];
-        $sortOrder = $params['sortOrder'];
-
-        if ($limit && $offset) {
-            $limitStr = " LIMIT {$limit} OFFSET {$offset}";
-        } elseif ($limit) {
-            $limitStr = " LIMIT {$limit}";
-        }
-
-        if ($sortField && $sortOrder) {
-            $orderStr = " ORDER BY {$sortField} {$sortOrder}";
-        }
-
-        $ssql = "SELECT id, name FROM products" . $orderStr . $limitStr . ";";
-        $stmt = $dbh->prepare($ssql);
-
-        $stmt->execute();
-
-        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-            // perform any formatter if required
-
-            $results[] = $row;
-        }
-
-        return $results;
-    }
 }

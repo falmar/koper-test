@@ -6,16 +6,16 @@
  * Time: 5:36 PM
  */
 
-namespace Tests\Products;
+namespace Tests\Models;
 
 
-use KoperTest\Controllers\Products\ProductList;
+use KoperTest\Models\Products;
 use KoperTest\Mocks\Container\Container;
 use KoperTest\Mocks\PDO\PDO;
 use KoperTest\Mocks\PDO\PDOStatement;
 
 
-class ProductListTest extends \PHPUnit_Framework_TestCase
+class ProductsTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetDataWithEmptyParams()
     {
@@ -35,7 +35,7 @@ class ProductListTest extends \PHPUnit_Framework_TestCase
         ]);
 
         // class to test
-        $productList = new ProductList($container);
+        $Products = new Products($container);
 
         $params = [
             'limit'     => 0,
@@ -45,7 +45,7 @@ class ProductListTest extends \PHPUnit_Framework_TestCase
         ];
 
         // test data
-        $productList->getData($params);
+        $Products->getData($params);
 
         $this->assertEquals($dbh->getPrepareCallCount(), 1);
     }
@@ -68,7 +68,7 @@ class ProductListTest extends \PHPUnit_Framework_TestCase
         ]);
 
         // class to test
-        $productList = new ProductList($container);
+        $Products = new Products($container);
 
         $params = [
             'limit'     => 5,
@@ -78,7 +78,7 @@ class ProductListTest extends \PHPUnit_Framework_TestCase
         ];
 
         // test data
-        $productList->getData($params);
+        $Products->getData($params);
 
         $this->assertEquals($dbh->getPrepareCallCount(), 1);
     }
@@ -101,7 +101,7 @@ class ProductListTest extends \PHPUnit_Framework_TestCase
         ]);
 
         // class to test
-        $productList = new ProductList($container);
+        $Products = new Products($container);
 
         $params = [
             'limit'     => 5,
@@ -111,7 +111,7 @@ class ProductListTest extends \PHPUnit_Framework_TestCase
         ];
 
         // test data
-        $productList->getData($params);
+        $Products->getData($params);
 
         $this->assertEquals($dbh->getPrepareCallCount(), 1);
     }
@@ -134,7 +134,7 @@ class ProductListTest extends \PHPUnit_Framework_TestCase
         ]);
 
         // class to test
-        $productList = new ProductList($container);
+        $Products = new Products($container);
 
         $params = [
             'limit'     => 0,
@@ -144,7 +144,7 @@ class ProductListTest extends \PHPUnit_Framework_TestCase
         ];
 
         // test data
-        $productList->getData($params);
+        $Products->getData($params);
 
         $this->assertEquals($dbh->getPrepareCallCount(), 1);
     }
@@ -168,7 +168,7 @@ class ProductListTest extends \PHPUnit_Framework_TestCase
         ]);
 
         // class to test
-        $productList = new ProductList($container);
+        $Products = new Products($container);
 
         $params = [
             'limit'     => 0,
@@ -178,13 +178,13 @@ class ProductListTest extends \PHPUnit_Framework_TestCase
         ];
 
         // test data
-        $productList->getData($params);
+        $Products->getData($params);
 
         $this->assertEquals($dbh->getPrepareCallCount(), 1);
 
         $params['sortField'] = 'id';
         $params['sortOrder'] = 'DESC';
-        $productList->getData($params);
+        $Products->getData($params);
 
         $this->assertEquals($dbh->getPrepareCallCount(), 2);
     }
@@ -208,7 +208,7 @@ class ProductListTest extends \PHPUnit_Framework_TestCase
         ]);
 
         // class to test
-        $productList = new ProductList($container);
+        $Products = new Products($container);
 
         $params = [
             'limit'     => 0,
@@ -218,14 +218,14 @@ class ProductListTest extends \PHPUnit_Framework_TestCase
         ];
 
         // test data
-        $productList->getData($params);
+        $Products->getData($params);
 
         $this->assertEquals($dbh->getPrepareCallCount(), 1);
 
         $params['sortField'] = '';
         $params['sortOrder'] = 'DESC';
 
-        $productList->getData($params);
+        $Products->getData($params);
 
         $this->assertEquals($dbh->getPrepareCallCount(), 2);
     }
