@@ -43,16 +43,16 @@ class ProductList
         $sortOrder = $params['sortOrder'];
 
         if ($limit && $offset) {
-            $limitStr = "LIMIT {$limit} OFFSET {$offset}";
+            $limitStr = " LIMIT {$limit} OFFSET {$offset}";
         } elseif ($limit) {
-            $limitStr = "LIMIT {$limit}";
+            $limitStr = " LIMIT {$limit}";
         }
 
         if ($sortField && $sortOrder) {
-            $orderStr = "ORDER BY {$sortField} {$sortOrder}";
+            $orderStr = " ORDER BY {$sortField} {$sortOrder}";
         }
 
-        $ssql = trim("SELECT id, name FROM products {$limitStr} {$orderStr}") . ';';
+        $ssql = "SELECT id, name FROM products" . $orderStr . $limitStr . ";";
         $stmt = $dbh->prepare($ssql);
 
         $stmt->execute();
