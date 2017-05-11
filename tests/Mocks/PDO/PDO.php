@@ -58,16 +58,15 @@ class PDO extends \PDO
             }
         }
 
+        $result = new PDOStatement([]);
 
         if (count($this->prepareReturn) && isset($this->prepareReturn[$this->prepareCallCount])) {
-            $this->prepareCallCount++;
-
-            return $this->prepareReturn[$this->prepareCallCount];
+            $result = $this->prepareReturn[$this->prepareCallCount];
         }
 
         $this->prepareCallCount++;
 
-        return new PDOStatement([]);
+        return $result;
     }
 
     public function getPrepareCallCount()

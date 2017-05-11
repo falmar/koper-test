@@ -11,6 +11,11 @@ namespace KoperTest\Mocks\PDO;
 
 class PDOStatement extends \PDOStatement
 {
+    protected $executeCallCount = 0;
+    protected $executeCalls = [];
+    protected $executeReturn = [];
+
+
     /**
      *  constructor.
      * @param array $expectations
@@ -25,5 +30,19 @@ class PDOStatement extends \PDOStatement
                 $this->$propKey = $prop;
             }
         }
+    }
+
+    public function execute($params = null)
+    {
+        $result = true;
+
+        $this->executeCallCount++;
+
+        return $result;
+    }
+
+    public function getExecuteCallCount()
+    {
+        return $this->executeCallCount;
     }
 }

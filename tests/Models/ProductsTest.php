@@ -19,12 +19,8 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetDataWithEmptyParams()
     {
-        // PDOStatement Expectations
-        $stmt = new PDOStatement([]);
         // PDO Expectations
         $dbh = new PDO([
-            'PDOStatement' => $stmt,
-
             'prepareCalls' => [
                 ['SELECT id, name FROM products;', null]
             ]
@@ -35,7 +31,7 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
         ]);
 
         // class to test
-        $Products = new Products($container);
+        $model = new Products($container);
 
         $params = [
             'limit'     => 0,
@@ -45,19 +41,15 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
         ];
 
         // test data
-        $Products->getData($params);
+        $model->getData($params);
 
         $this->assertEquals($dbh->getPrepareCallCount(), 1);
     }
 
     public function testGetDataWithLimit()
     {
-        // PDOStatement Expectations
-        $stmt = new PDOStatement([]);
         // PDO Expectations
         $dbh = new PDO([
-            'PDOStatement' => $stmt,
-
             'prepareCalls' => [
                 ['SELECT id, name FROM products LIMIT 5;', null]
             ]
@@ -68,7 +60,7 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
         ]);
 
         // class to test
-        $Products = new Products($container);
+        $model = new Products($container);
 
         $params = [
             'limit'     => 5,
@@ -78,19 +70,15 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
         ];
 
         // test data
-        $Products->getData($params);
+        $model->getData($params);
 
         $this->assertEquals($dbh->getPrepareCallCount(), 1);
     }
 
     public function testGetDataWithLimitAndOffset()
     {
-        // PDOStatement Expectations
-        $stmt = new PDOStatement([]);
         // PDO Expectations
         $dbh = new PDO([
-            'PDOStatement' => $stmt,
-
             'prepareCalls' => [
                 ['SELECT id, name FROM products LIMIT 5 OFFSET 20;', null]
             ]
@@ -101,7 +89,7 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
         ]);
 
         // class to test
-        $Products = new Products($container);
+        $model = new Products($container);
 
         $params = [
             'limit'     => 5,
@@ -111,19 +99,15 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
         ];
 
         // test data
-        $Products->getData($params);
+        $model->getData($params);
 
         $this->assertEquals($dbh->getPrepareCallCount(), 1);
     }
 
     public function testGetDataWithOffsetNoLimit()
     {
-        // PDOStatement Expectations
-        $stmt = new PDOStatement([]);
         // PDO Expectations
         $dbh = new PDO([
-            'PDOStatement' => $stmt,
-
             'prepareCalls' => [
                 ['SELECT id, name FROM products;', null]
             ]
@@ -134,7 +118,7 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
         ]);
 
         // class to test
-        $Products = new Products($container);
+        $model = new Products($container);
 
         $params = [
             'limit'     => 0,
@@ -144,19 +128,15 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
         ];
 
         // test data
-        $Products->getData($params);
+        $model->getData($params);
 
         $this->assertEquals($dbh->getPrepareCallCount(), 1);
     }
 
     public function testGetDataWithSortFieldAndOrder()
     {
-        // PDOStatement Expectations
-        $stmt = new PDOStatement([]);
         // PDO Expectations
         $dbh = new PDO([
-            'PDOStatement' => $stmt,
-
             'prepareCalls' => [
                 ['SELECT id, name FROM products ORDER BY name ASC;', null],
                 ['SELECT id, name FROM products ORDER BY id DESC;', null],
@@ -168,7 +148,7 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
         ]);
 
         // class to test
-        $Products = new Products($container);
+        $model = new Products($container);
 
         $params = [
             'limit'     => 0,
@@ -178,25 +158,21 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
         ];
 
         // test data
-        $Products->getData($params);
+        $model->getData($params);
 
         $this->assertEquals($dbh->getPrepareCallCount(), 1);
 
         $params['sortField'] = 'id';
         $params['sortOrder'] = 'DESC';
-        $Products->getData($params);
+        $model->getData($params);
 
         $this->assertEquals($dbh->getPrepareCallCount(), 2);
     }
 
     public function testGetDataWithOnlyOneSortFieldOrOrder()
     {
-        // PDOStatement Expectations
-        $stmt = new PDOStatement([]);
         // PDO Expectations
         $dbh = new PDO([
-            'PDOStatement' => $stmt,
-
             'prepareCalls' => [
                 ['SELECT id, name FROM products;', null],
                 ['SELECT id, name FROM products;', null],
@@ -208,7 +184,7 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
         ]);
 
         // class to test
-        $Products = new Products($container);
+        $model = new Products($container);
 
         $params = [
             'limit'     => 0,
@@ -218,15 +194,46 @@ class ProductsTest extends \PHPUnit_Framework_TestCase
         ];
 
         // test data
-        $Products->getData($params);
+        $model->getData($params);
 
         $this->assertEquals($dbh->getPrepareCallCount(), 1);
 
         $params['sortField'] = '';
         $params['sortOrder'] = 'DESC';
 
-        $Products->getData($params);
+        $model->getData($params);
 
         $this->assertEquals($dbh->getPrepareCallCount(), 2);
+    }
+
+    public function testGetDataCallExecuteStatement()
+    {
+        // PDOStatement Expectations
+        $stmt = new PDOStatement([
+            'executeCalls' => [
+                []
+            ]
+        ]);
+        // PDO Expectations
+        $dbh = new PDO([
+            'prepareReturn' => [$stmt]
+        ]);
+        // DI Conainer
+        $container = new Container([
+            'dbh' => $dbh
+        ]);
+
+        $model = new Products($container);
+
+        $params = [
+            'limit'     => 0,
+            'offset'    => 0,
+            'sortField' => 'name',
+            'sortOrder' => ''
+        ];
+
+        $model->getData($params);
+
+        $this->assertEquals($stmt->getExecuteCallCount(), 1);
     }
 }
