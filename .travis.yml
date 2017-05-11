@@ -10,6 +10,7 @@ cache:
     - vendor
 
 script:
+  - composer install
   - phpunit
 
 after_success:
