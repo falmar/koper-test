@@ -1,14 +1,13 @@
 <?php
+declare(strict_types = 1);
 /**
  * Created by PhpStorm.
  * User: falmar
  * Date: 5/11/17
  * Time: 3:27 PM
  */
-declare(strict_types = 1);
 
 namespace KoperTest\Models;
-
 
 use Psr\Container\ContainerInterface;
 
@@ -25,7 +24,7 @@ class Products
      * @param array $params
      * @return array
      */
-    public function getList(array $params): array
+    public function getList(array $params = []): array
     {
         /** @var \PDO $dbh */
         $dbh      = $this->container->get('dbh');
@@ -33,10 +32,10 @@ class Products
         $limitStr = '';
         $orderStr = '';
 
-        $limit     = $params['limit'];
-        $offset    = $params['offset'];
-        $sortField = $params['sortField'];
-        $sortOrder = $params['sortOrder'];
+        $limit     = $params['limit'] ?? 0;
+        $offset    = $params['offset'] ?? 0;
+        $sortField = $params['sortField'] ?? '';
+        $sortOrder = $params['sortOrder'] ?? '';
 
         if ($limit && $offset) {
             $limitStr = " LIMIT {$limit} OFFSET {$offset}";
