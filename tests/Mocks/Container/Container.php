@@ -6,10 +6,11 @@
  * Time: 8:35 PM
  */
 
-namespace KoperTest\Mocks\Container;
+namespace Tests\Mocks\Container;
 
 
 use Psr\Container\ContainerInterface;
+
 
 class Container implements ContainerInterface
 {

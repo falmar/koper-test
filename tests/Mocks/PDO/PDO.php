@@ -6,7 +6,7 @@
  * Time: 8:27 PM
  */
 
-namespace KoperTest\Mocks\PDO;
+namespace Tests\Mocks\PDO;
 
 
 class PDO extends \PDO
