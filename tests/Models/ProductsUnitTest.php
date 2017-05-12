@@ -9,15 +9,16 @@ declare(strict_types = 1);
 
 namespace Tests\Models;
 
-use KoperTest\Mocks\Container\Container;
-use KoperTest\Mocks\PDO\PDO;
-use KoperTest\Mocks\PDO\PDOStatement;
 use KoperTest\Models\Products;
+use Tests\Mocks\Container\Container;
+use Tests\Mocks\PDO\PDO;
+use Tests\Mocks\PDO\PDOStatement;
 
-class ProductsUnitTest extends \PHPUnit_Framework_TestCase
+class ProductsUnitTest extends BaseTestCase
 {
     public function testGetListWithEmptyParams()
     {
+        $expectedQuery = $this->inlineSQLString('SELECT id, name, tags, price, created_at, updated_at FROM product;');
         // PDO Expectations
         $dbh = new PDO();
         // DI Container
@@ -28,17 +29,18 @@ class ProductsUnitTest extends \PHPUnit_Framework_TestCase
         // test data
         $model->getList();
 
+        $params    = $dbh->getPrepareParams(0);
+        $params[0] = $this->inlineSQLString($params[0]);
+
         $this->assertEquals(1, $dbh->getPrepareCallCount());
-        $this->assertEquals(
-            [
-                'SELECT id, name, tags, price, created_at, updated_at FROM product;',
-                null
-            ], $dbh->getPrepareParams(0)
-        );
+        $this->assertEquals([$expectedQuery, null], [$params[0], $params[1]]);
     }
 
     public function testGetListWithLimit()
     {
+        $expectedQuery = $this->inlineSQLString(
+            'SELECT id, name, tags, price, created_at, updated_at FROM product LIMIT 5;'
+        );
         // PDO Expectations
         $dbh = new PDO();
         // DI Container
@@ -50,20 +52,22 @@ class ProductsUnitTest extends \PHPUnit_Framework_TestCase
         // test data
         $model->getList(['limit' => 5]);
 
+        $params    = $dbh->getPrepareParams(0);
+        $params[0] = $this->inlineSQLString($params[0]);
+
         $this->assertEquals(1, $dbh->getPrepareCallCount());
-        $this->assertEquals(
-            ['SELECT id, name, tags, price, created_at, updated_at FROM product LIMIT 5;', null],
-            $dbh->getPrepareParams(0)
-        );
+        $this->assertEquals([$expectedQuery, null], [$params[0], $params[1]]);
     }
 
     public function testGetListWithLimitAndOffset()
     {
+        $expectedQuery = $this->inlineSQLString(
+            'SELECT id, name, tags, price, created_at, updated_at FROM product LIMIT 5 OFFSET 20;'
+        );
         // PDO Expectations
         $dbh = new PDO();
         // DI Container
         $container = new Container(['dbh' => $dbh]);
-
         // class to test
         $model = new Products($container);
 
@@ -73,37 +77,43 @@ class ProductsUnitTest extends \PHPUnit_Framework_TestCase
             'offset' => 20
         ]);
 
+        $params    = $dbh->getPrepareParams(0);
+        $params[0] = $this->inlineSQLString($params[0]);
+
         $this->assertEquals(1, $dbh->getPrepareCallCount());
-        $this->assertEquals(
-            [
-                'SELECT id, name, tags, price, created_at, updated_at FROM product LIMIT 5 OFFSET 20;',
-                null
-            ], $dbh->getPrepareParams(0)
-        );
+        $this->assertEquals([$expectedQuery, null], [$params[0], $params[1]]);
     }
 
     public function testGetListWithOffsetNoLimit()
     {
+        $expectedQuery = $this->inlineSQLString('SELECT id, name, tags, price, created_at, updated_at FROM product;');
         // PDO Expectations
         $dbh = new PDO();
         // DI Container
         $container = new Container(['dbh' => $dbh]);
-
         // class to test
         $model = new Products($container);
 
         // test data
         $model->getList(['offset' => 20]);
 
+        $params    = $dbh->getPrepareParams(0);
+        $params[0] = $this->inlineSQLString($params[0]);
+
         $this->assertEquals(1, $dbh->getPrepareCallCount());
-        $this->assertEquals(
-            ['SELECT id, name, tags, price, created_at, updated_at FROM product;', null],
-            $dbh->getPrepareParams(0)
-        );
+        $this->assertEquals([$expectedQuery, null], [$params[0], $params[1]]);
     }
 
     public function testGetListWithSortFieldAndOrder()
     {
+        $expectedQueries = [
+            $this->inlineSQLString(
+                'SELECT id, name, tags, price, created_at, updated_at FROM product ORDER BY name ASC;'
+            ),
+            $this->inlineSQLString(
+                'SELECT id, name, tags, price, created_at, updated_at FROM product ORDER BY id DESC;'
+            )
+        ];
         // PDO Expectations
         $dbh = new PDO();
         // DI Container
@@ -116,30 +126,31 @@ class ProductsUnitTest extends \PHPUnit_Framework_TestCase
             'sortField' => 'name',
             'sortOrder' => 'ASC',
         ]);
-
-        // test data
         $model->getList([
             'sortField' => 'id',
             'sortOrder' => 'DESC',
         ]);
 
+        $params0    = $dbh->getPrepareParams(0);
+        $params1    = $dbh->getPrepareParams(1);
+        $params0[0] = $this->inlineSQLString($params0[0]);
+        $params1[0] = $this->inlineSQLString($params1[0]);
+
         $this->assertEquals(2, $dbh->getPrepareCallCount());
-        $this->assertEquals(
-            [
-                'SELECT id, name, tags, price, created_at, updated_at FROM product ORDER BY name ASC;',
-                null
-            ], $dbh->getPrepareParams(0)
-        );
-        $this->assertEquals(
-            [
-                'SELECT id, name, tags, price, created_at, updated_at FROM product ORDER BY id DESC;',
-                null
-            ], $dbh->getPrepareParams(1)
-        );
+        $this->assertEquals([$expectedQueries[0], null], [$params0[0], $params0[1]]);
+        $this->assertEquals([$expectedQueries[1], null], [$params1[0], $params1[1]]);
     }
 
     public function testGetListWithOnlyOneSortFieldOrOrder()
     {
+        $expectedQueries = [
+            $this->inlineSQLString(
+                'SELECT id, name, tags, price, created_at, updated_at FROM product;'
+            ),
+            $this->inlineSQLString(
+                'SELECT id, name, tags, price, created_at, updated_at FROM product;'
+            )
+        ];
         // PDO Expectations
         $dbh = new PDO();
         // DI Container
@@ -152,15 +163,14 @@ class ProductsUnitTest extends \PHPUnit_Framework_TestCase
         $model->getList(['sortField' => 'name']);
         $model->getList(['sortOrder' => 'DESC']);
 
+        $params0    = $dbh->getPrepareParams(0);
+        $params1    = $dbh->getPrepareParams(1);
+        $params0[0] = $this->inlineSQLString($params0[0]);
+        $params1[0] = $this->inlineSQLString($params1[0]);
+
         $this->assertEquals(2, $dbh->getPrepareCallCount());
-        $this->assertEquals(
-            ['SELECT id, name, tags, price, created_at, updated_at FROM product;', null],
-            $dbh->getPrepareParams(0)
-        );
-        $this->assertEquals(
-            ['SELECT id, name, tags, price, created_at, updated_at FROM product;', null],
-            $dbh->getPrepareParams(1)
-        );
+        $this->assertEquals([$expectedQueries[0], null], [$params0[0], $params0[1]]);
+        $this->assertEquals([$expectedQueries[1], null], [$params1[0], $params1[1]]);
     }
 
     public function testGetListCallExecuteStatement()
