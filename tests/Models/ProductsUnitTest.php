@@ -5,6 +5,7 @@
  * Date: 5/10/17
  * Time: 5:36 PM
  */
+declare(strict_types=1);
 
 namespace Tests\Models;
 
