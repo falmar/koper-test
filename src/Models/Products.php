@@ -47,7 +47,18 @@ class Products
             $orderStr = " ORDER BY {$sortField} {$sortOrder}";
         }
 
-        $ssql = "SELECT id, name, tags, price, created_at, updated_at FROM product" . $orderStr . $limitStr . ";";
+        $ssql = "
+          SELECT 
+              id, 
+              name, 
+              tags, 
+              price, 
+              created_at, 
+              updated_at 
+          FROM product
+          {$orderStr}
+          {$limitStr}
+        ;";
 
         /** @var \PDOStatement $stmt */
         $stmt = $dbh->prepare($ssql);

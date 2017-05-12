@@ -17,6 +17,6 @@ class BaseTestCase extends \PHPUnit_Framework_TestCase
      */
     public function inlineSQLString(string $SQLString): string
     {
-        return preg_replace('/\s{1,}/', ' ', $SQLString);
+        return trim(preg_replace(['/\s{1,}/', '/\s{1,};/'], [' ', ';'], $SQLString));
     }
 }
