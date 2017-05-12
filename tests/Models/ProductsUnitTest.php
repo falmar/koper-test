@@ -154,7 +154,11 @@ class ProductsUnitTest extends \PHPUnit_Framework_TestCase
     {
         // PDOStatement Expectations
         $stmt = new PDOStatement([
-            'fetchReturn' => [true, true, false]
+            'fetchReturn' => [
+                ['id' => 1],
+                ['id' => 2],
+                false
+            ]
         ]);
         // PDO Expectations
         $dbh = new PDO([
@@ -163,7 +167,11 @@ class ProductsUnitTest extends \PHPUnit_Framework_TestCase
         // DI Container
         $container = new Container(['dbh' => $dbh]);
         // class to test
-        $model = new Products($container);
+        $model          = new Products($container);
+        $expectedResult = [
+            ['id' => 1, 'tags' => []],
+            ['id' => 2, 'tags' => []],
+        ];
 
         $result = $model->getList();
 
@@ -171,7 +179,7 @@ class ProductsUnitTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals([\PDO::FETCH_ASSOC, \PDO::FETCH_ORI_NEXT, 0], $stmt->getFetchParams(0));
         $this->assertEquals([\PDO::FETCH_ASSOC, \PDO::FETCH_ORI_NEXT, 0], $stmt->getFetchParams(1));
         $this->assertEquals([\PDO::FETCH_ASSOC, \PDO::FETCH_ORI_NEXT, 0], $stmt->getFetchParams(2));
-        $this->assertEquals([true, true], $result);
+        $this->assertEquals($expectedResult, $result);
     }
 
     public function testGetListResult()
@@ -179,7 +187,7 @@ class ProductsUnitTest extends \PHPUnit_Framework_TestCase
         // PDOStatement Expectations
         $stmt = new PDOStatement([
             'fetchReturn' => [
-                ['id' => 1, 'name' => 'MX-4 Thermal Compound'],
+                ['id' => 1, 'name' => 'MX-4 Thermal Compound', 'tags' => '["Thermal", "Computers"]'],
                 ['id' => 2, 'name' => 'ArtiClean 1 & 2 30ml']
             ]
         ]);
@@ -193,8 +201,8 @@ class ProductsUnitTest extends \PHPUnit_Framework_TestCase
         $model = new Products($container);
 
         $expectedResult = [
-            ['id' => 1, 'name' => 'MX-4 Thermal Compound'],
-            ['id' => 2, 'name' => 'ArtiClean 1 & 2 30ml']
+            ['id' => 1, 'name' => 'MX-4 Thermal Compound', 'tags' => ['Thermal', 'Computers']],
+            ['id' => 2, 'name' => 'ArtiClean 1 & 2 30ml', 'tags' => []]
         ];
 
         $result = $model->getList();

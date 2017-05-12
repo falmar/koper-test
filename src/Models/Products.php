@@ -56,15 +56,11 @@ class Products
 
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
             // perform any formatter if required
+            $row['tags'] = json_decode($row['tags'] ?? '[]');
 
             $results[] = $row;
         }
 
         return $results;
-    }
-
-    public function getTags(int $productId): array
-    {
-        return [];
     }
 }
