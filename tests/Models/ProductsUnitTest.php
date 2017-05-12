@@ -29,7 +29,12 @@ class ProductsUnitTest extends \PHPUnit_Framework_TestCase
         $model->getList();
 
         $this->assertEquals(1, $dbh->getPrepareCallCount());
-        $this->assertEquals(['SELECT id, name FROM products;', null], $dbh->getPrepareParams(0));
+        $this->assertEquals(
+            [
+                'SELECT id, name, tags, price, created_at, updated_at FROM product;',
+                null
+            ], $dbh->getPrepareParams(0)
+        );
     }
 
     public function testGetListWithLimit()
@@ -46,7 +51,10 @@ class ProductsUnitTest extends \PHPUnit_Framework_TestCase
         $model->getList(['limit' => 5]);
 
         $this->assertEquals(1, $dbh->getPrepareCallCount());
-        $this->assertEquals(['SELECT id, name FROM products LIMIT 5;', null], $dbh->getPrepareParams(0));
+        $this->assertEquals(
+            ['SELECT id, name, tags, price, created_at, updated_at FROM product LIMIT 5;', null],
+            $dbh->getPrepareParams(0)
+        );
     }
 
     public function testGetListWithLimitAndOffset()
@@ -66,7 +74,12 @@ class ProductsUnitTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $this->assertEquals(1, $dbh->getPrepareCallCount());
-        $this->assertEquals(['SELECT id, name FROM products LIMIT 5 OFFSET 20;', null], $dbh->getPrepareParams(0));
+        $this->assertEquals(
+            [
+                'SELECT id, name, tags, price, created_at, updated_at FROM product LIMIT 5 OFFSET 20;',
+                null
+            ], $dbh->getPrepareParams(0)
+        );
     }
 
     public function testGetListWithOffsetNoLimit()
@@ -83,7 +96,10 @@ class ProductsUnitTest extends \PHPUnit_Framework_TestCase
         $model->getList(['offset' => 20]);
 
         $this->assertEquals(1, $dbh->getPrepareCallCount());
-        $this->assertEquals(['SELECT id, name FROM products;', null], $dbh->getPrepareParams(0));
+        $this->assertEquals(
+            ['SELECT id, name, tags, price, created_at, updated_at FROM product;', null],
+            $dbh->getPrepareParams(0)
+        );
     }
 
     public function testGetListWithSortFieldAndOrder()
@@ -108,8 +124,18 @@ class ProductsUnitTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $this->assertEquals(2, $dbh->getPrepareCallCount());
-        $this->assertEquals(['SELECT id, name FROM products ORDER BY name ASC;', null], $dbh->getPrepareParams(0));
-        $this->assertEquals(['SELECT id, name FROM products ORDER BY id DESC;', null], $dbh->getPrepareParams(1));
+        $this->assertEquals(
+            [
+                'SELECT id, name, tags, price, created_at, updated_at FROM product ORDER BY name ASC;',
+                null
+            ], $dbh->getPrepareParams(0)
+        );
+        $this->assertEquals(
+            [
+                'SELECT id, name, tags, price, created_at, updated_at FROM product ORDER BY id DESC;',
+                null
+            ], $dbh->getPrepareParams(1)
+        );
     }
 
     public function testGetListWithOnlyOneSortFieldOrOrder()
@@ -127,8 +153,14 @@ class ProductsUnitTest extends \PHPUnit_Framework_TestCase
         $model->getList(['sortOrder' => 'DESC']);
 
         $this->assertEquals(2, $dbh->getPrepareCallCount());
-        $this->assertEquals(['SELECT id, name FROM products;', null], $dbh->getPrepareParams(0));
-        $this->assertEquals(['SELECT id, name FROM products;', null], $dbh->getPrepareParams(1));
+        $this->assertEquals(
+            ['SELECT id, name, tags, price, created_at, updated_at FROM product;', null],
+            $dbh->getPrepareParams(0)
+        );
+        $this->assertEquals(
+            ['SELECT id, name, tags, price, created_at, updated_at FROM product;', null],
+            $dbh->getPrepareParams(1)
+        );
     }
 
     public function testGetListCallExecuteStatement()
@@ -169,8 +201,8 @@ class ProductsUnitTest extends \PHPUnit_Framework_TestCase
         // class to test
         $model          = new Products($container);
         $expectedResult = [
-            ['id' => 1, 'tags' => []],
-            ['id' => 2, 'tags' => []],
+            ['id' => 1, 'tags' => [], 'images' => []],
+            ['id' => 2, 'tags' => [], 'images' => []],
         ];
 
         $result = $model->getList();
@@ -201,8 +233,8 @@ class ProductsUnitTest extends \PHPUnit_Framework_TestCase
         $model = new Products($container);
 
         $expectedResult = [
-            ['id' => 1, 'name' => 'MX-4 Thermal Compound', 'tags' => ['Thermal', 'Computers']],
-            ['id' => 2, 'name' => 'ArtiClean 1 & 2 30ml', 'tags' => []]
+            ['id' => 1, 'name' => 'MX-4 Thermal Compound', 'tags' => ['Thermal', 'Computers'], 'images' => []],
+            ['id' => 2, 'name' => 'ArtiClean 1 & 2 30ml', 'tags' => [], 'images' => []]
         ];
 
         $result = $model->getList();

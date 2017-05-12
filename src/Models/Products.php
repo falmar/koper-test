@@ -47,7 +47,7 @@ class Products
             $orderStr = " ORDER BY {$sortField} {$sortOrder}";
         }
 
-        $ssql = "SELECT id, name FROM products" . $orderStr . $limitStr . ";";
+        $ssql = "SELECT id, name, tags, price, created_at, updated_at FROM product" . $orderStr . $limitStr . ";";
 
         /** @var \PDOStatement $stmt */
         $stmt = $dbh->prepare($ssql);
@@ -56,7 +56,8 @@ class Products
 
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
             // perform any formatter if required
-            $row['tags'] = json_decode($row['tags'] ?? '[]');
+            $row['tags']   = json_decode($row['tags'] ?? '[]');
+            $row['images'] = [];
 
             $results[] = $row;
         }
