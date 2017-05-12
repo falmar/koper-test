@@ -75,4 +75,9 @@ class Products
 
         return $results;
     }
+
+    public function new(array $data): int
+    {
+        return 0;
+    }
 }

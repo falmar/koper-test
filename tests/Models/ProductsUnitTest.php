@@ -251,4 +251,113 @@ class ProductsUnitTest extends BaseTestCase
 
         $this->assertEquals($expectedResult, $result);
     }
+
+    // --------------- new entity
+
+    public function testNewPrepareQuery()
+    {
+        $expectedQuery = $this->inlineSQLString('
+          INSERT INTO product
+          (name, tags, price, created_at, updated_at) 
+          VALUES
+          (?, ?, ?, ?, ?)
+          RETURNING id;
+        ');
+        // PDO Expectations
+        $dbh = new PDO();
+        // DI Container
+        $container = new Container(['dbh' => $dbh]);
+        // model
+        $model = new Products($container);
+
+        $model->new([
+            'name'       => '',
+            'tags'       => '',
+            'price'      => 0,
+            'created_at' => '',
+            'updated_at' => ''
+        ]);
+
+        $params    = $dbh->getPrepareParams(0);
+        $params[0] = $this->inlineSQLString($params[0]);
+
+        $this->assertEquals(1, $dbh->getPrepareCallCount());
+        $this->assertEquals([$expectedQuery, null], [$params[0], $params[1]]);
+    }
+
+    public function testNewBindColumnParams()
+    {
+        // expectation
+        $expectedParams = [1, 'id', \PDO::PARAM_STR];
+        // PDO Expectations
+        $dbh = new PDO();
+        // DI Container
+        $container = new Container(['dbh' => $dbh]);
+        // model
+        $model = new Products($container);
+
+        $model->new([
+            'name'       => '',
+            'tags'       => '',
+            'price'      => 0,
+            'created_at' => '',
+            'updated_at' => ''
+        ]);
+
+        $this->assertEquals(true, false);
+    }
+
+    public function testNewBindValueParams()
+    {
+        // expectation
+        $expectedParams = [
+            [1, 'MX-4 Thermal Compound', \PDO::PARAM_STR],
+            [2, '["Computers", "CPU", "GPU"]', \PDO::PARAM_STR],
+            [3, 6.79, \PDO::PARAM_STR],
+            [4, '2017-05-05T18:45:00Z', \PDO::PARAM_STR],
+            [5, '2017-05-05T18:45:00Z', \PDO::PARAM_STR]
+        ];
+        // PDOStatement Expectations
+        $stmt = new PDOStatement();
+        // PDO Expectations
+        $dbh = new PDO([
+            'prepareReturn' => [$stmt]
+        ]);
+        // DI Container
+        $container = new Container(['dbh' => $dbh]);
+        // model
+        $model = new Products($container);
+
+        $model->new([
+            'name'       => 'MX-4 Thermal Compound',
+            'tags'       => '["Computers", "CPU", "GPU"]',
+            'price'      => 6.79,
+            'created_at' => '2017-05-05T18:45:00Z',
+            'updated_at' => '2017-05-05T18:45:00Z'
+        ]);
+
+        $this->assertEquals(true, false);
+    }
+
+    public function testNewResult()
+    {
+        $stmt      = new PDOStatement([
+            'bindColumnReference' => [1]
+        ]);
+        $dbh       = new PDO([
+            'prepareReturn' => [$stmt]
+        ]);
+        $container = new Container(['dbh' => $dbh]);
+        $model     = new Products($container);
+
+        $result = $model->new([
+            'name'       => '',
+            'tags'       => '',
+            'price'      => 0,
+            'created_at' => '',
+            'updated_at' => ''
+        ]);
+
+        $this->assertEquals(1, $result);
+    }
 }
