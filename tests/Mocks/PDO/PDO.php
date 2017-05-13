@@ -16,6 +16,7 @@ class PDO extends \PDO
     protected $prepareCallCount = 0;
     protected $prepareParams = [];
     protected $prepareReturn = [];
+    protected $prepareThrowable = [];
 
     /**
      *  constructor.
@@ -42,6 +43,14 @@ class PDO extends \PDO
         }
 
         $this->prepareCallCount++;
+
+        if (
+            count($this->prepareThrowable) &&
+            isset($this->prepareThrowable[$this->prepareCallCount - 1]) &&
+            is_callable($this->prepareThrowable[$this->prepareCallCount - 1])
+        ) {
+            $this->prepareThrowable[$this->prepareCallCount - 1]();
+        }
 
         return $result;
     }

@@ -15,23 +15,28 @@ class PDOStatement extends \PDOStatement
     protected $executeCallCount = 0;
     protected $executeParams = [];
     protected $executeReturn = [];
+    protected $executeThrowable = [];
 
     protected $fetchCallCount = 0;
     protected $fetchParams = [];
     protected $fetchReturn = [];
+    protected $fetchThrowable = [];
 
     protected $bindColumnCallCount = 0;
     protected $bindColumnParams = [];
     protected $bindColumnReturn = [];
     protected $bindColumnReference = [];
+    protected $bindColumnThrowable = [];
 
     protected $bindValueCallCount = 0;
     protected $bindValueParams = [];
     protected $bindValueReturn = [];
+    protected $bindValueThrowable = [];
 
     protected $rowCountCallCount = 0;
     protected $rowCountParams = [];
     protected $rowCountReturn = [];
+    protected $rowCountThrowable = [];
 
     /**
      *  constructor.
@@ -65,6 +70,14 @@ class PDOStatement extends \PDOStatement
         }
 
         $this->executeCallCount++;
+
+        if (
+            count($this->executeThrowable) &&
+            isset($this->executeThrowable[$this->executeCallCount - 1]) &&
+            is_callable($this->executeThrowable[$this->executeCallCount - 1])
+        ) {
+            $this->executeThrowable[$this->executeCallCount - 1]($params);
+        }
 
         return $result;
     }
@@ -142,6 +155,14 @@ class PDOStatement extends \PDOStatement
 
         $this->fetchCallCount++;
 
+        if (
+            count($this->fetchThrowable) &&
+            isset($this->fetchThrowable[$this->fetchCallCount - 1]) &&
+            is_callable($this->fetchThrowable[$this->fetchCallCount - 1])
+        ) {
+            $this->fetchThrowable[$this->fetchCallCount - 1]($fetchStyle, $orientation, $offset);
+        }
+
         return $result;
     }
 
@@ -212,7 +233,7 @@ class PDOStatement extends \PDOStatement
     {
         $result = false;
 
-        $this->bindColumnParams[] = [$column, $param, $type = null, $maxLenth = null, $driverData = null];
+        $this->bindColumnParams[] = [$column, $param, $type, $maxLength, $driverData];
 
         if (count($this->bindColumnReturn) && isset($this->bindColumnReturn[$this->bindColumnCallCount])) {
             $result = $this->bindColumnReturn[$this->bindColumnCallCount];
@@ -223,6 +244,14 @@ class PDOStatement extends \PDOStatement
         }
 
         $this->bindColumnCallCount++;
+
+        if (
+            count($this->bindColumnThrowable) &&
+            isset($this->bindColumnThrowable[$this->bindColumnCallCount - 1]) &&
+            is_callable($this->bindColumnThrowable[$this->bindColumnCallCount - 1])
+        ) {
+            $this->bindColumnThrowable[$this->bindColumnCallCount - 1]($column, $param, $type, $maxLength, $driverData);
+        }
 
         return $result;
     }
@@ -300,6 +329,14 @@ class PDOStatement extends \PDOStatement
 
         $this->bindValueCallCount++;
 
+        if (
+            count($this->bindValueThrowable) &&
+            isset($this->bindValueThrowable[$this->bindValueCallCount - 1]) &&
+            is_callable($this->bindValueThrowable[$this->bindValueCallCount - 1])
+        ) {
+            $this->bindValueThrowable[$this->bindValueCallCount - 1]($param, $value, $type);
+        }
+
         return $result;
     }
 
@@ -372,6 +409,14 @@ class PDOStatement extends \PDOStatement
         }
 
         $this->rowCountCallCount++;
+
+        if (
+            count($this->rowCountThrowable) &&
+            isset($this->rowCountThrowable[$this->rowCountCallCount - 1]) &&
+            is_callable($this->rowCountThrowable[$this->rowCountCallCount - 1])
+        ) {
+            $this->rowCountThrowable[$this->rowCountCallCount - 1]();
+        }
 
         return $result;
     }
