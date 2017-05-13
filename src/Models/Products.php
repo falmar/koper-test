@@ -13,6 +13,7 @@ use Psr\Container\ContainerInterface;
 
 class Products
 {
+    /** @var null|ContainerInterface $container */
     protected $container = null;
 
     public function __construct(ContainerInterface $container)
@@ -118,6 +119,28 @@ class Products
      */
     public function update(int $id, array $data): bool
     {
-        return false;
+        if ($id <= 0 || !count($data)) {
+            return false;
+        }
+
+        /** @var \PDO $dbh */
+        $dbh = $this->container->get('dbh');
+
+        $ssql = "
+            UPDATE product 
+            SET name = ?, tags = ?, price = ?, updated_at = ?
+            WHERE id = ?;                    
+        ";
+
+        $stmt = $dbh->prepare($ssql);
+
+        $stmt->bindValue(1, $data['name'], \PDO::PARAM_STR);
+        $stmt->bindValue(2, $data['tags'], \PDO::PARAM_STR);
+        $stmt->bindValue(3, $data['price'], \PDO::PARAM_STR);
+        $stmt->bindValue(4, $data['updated_at'], \PDO::PARAM_STR);
+        $stmt->bindValue(5, $id, \PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->rowCount() > 0;
     }
 }
