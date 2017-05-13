@@ -21,6 +21,7 @@ class Products
     }
 
     /**
+     * Get the products from database
      * @param array $params
      * @return array
      */
@@ -76,7 +77,15 @@ class Products
         return $results;
     }
 
-    public function new(array $data): int
+    /**
+     * Insert a new entity to the products table
+     * Observation: this method was originally called 'new', using php 7 change "Loosening Reserved Word"
+     * but PHPUnit was not able to generate coverage
+     *
+     * @param array $data
+     * @return int
+     */
+    public function newProduct(array $data): int
     {
         /** @var \PDO $dbh */
         $dbh  = $this->container->get('dbh');

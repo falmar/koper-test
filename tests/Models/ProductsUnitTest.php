@@ -290,7 +290,7 @@ class ProductsUnitTest extends BaseTestCase
         // model
         $model = new Products($container);
 
-        $model->new([
+        $model->newProduct([
             'name'       => '',
             'tags'       => '',
             'price'      => 0,
@@ -319,7 +319,7 @@ class ProductsUnitTest extends BaseTestCase
         $container      = new Container(['dbh' => $dbh]);
         $model          = new Products($container);
 
-        $model->new([
+        $model->newProduct([
             'name'       => '',
             'tags'       => '',
             'price'      => 0,
@@ -352,7 +352,7 @@ class ProductsUnitTest extends BaseTestCase
         // model
         $model = new Products($container);
 
-        $model->new([
+        $model->newProduct([
             'name'       => 'MX-4 Thermal Compound',
             'tags'       => '["Computers", "CPU", "GPU"]',
             'price'      => 6.79,
@@ -377,7 +377,7 @@ class ProductsUnitTest extends BaseTestCase
         $container = new Container(['dbh' => $dbh]);
         $model     = new Products($container);
 
-        $result = $model->new([
+        $result = $model->newProduct([
             'name'       => '',
             'tags'       => '',
             'price'      => 0,
@@ -397,7 +397,7 @@ class ProductsUnitTest extends BaseTestCase
         $container = new Container(['dbh' => $dbh]);
         $model     = new Products($container);
 
-        $model->new([
+        $model->newProduct([
             'name'       => '',
             'tags'       => '',
             'price'      => 0,
@@ -418,7 +418,7 @@ class ProductsUnitTest extends BaseTestCase
         $container = new Container(['dbh' => $dbh]);
         $model     = new Products($container);
 
-        $model->new([
+        $model->newProduct([
             'name'       => '',
             'tags'       => '',
             'price'      => 0,
