@@ -272,9 +272,9 @@ class ProductsUnitTest extends BaseTestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    // --------------- new entity
+    // --------------- add entity
 
-    public function testNewPrepareQuery()
+    public function testAddPrepareQuery()
     {
         $expectedQuery = $this->inlineSQLString('
           INSERT INTO product
@@ -290,7 +290,7 @@ class ProductsUnitTest extends BaseTestCase
         // model
         $model = new Products($container);
 
-        $model->newProduct([
+        $model->add([
             'name'       => '',
             'tags'       => '',
             'price'      => 0,
@@ -308,7 +308,7 @@ class ProductsUnitTest extends BaseTestCase
         $this->assertEquals([$expectedQuery, null], [$params[0], $params[1]]);
     }
 
-    public function testNewBindColumnParams()
+    public function testAddBindColumnParams()
     {
         // expectation
         $expectedParams = ['id', null, null, null, null];
@@ -319,7 +319,7 @@ class ProductsUnitTest extends BaseTestCase
         $container      = new Container(['dbh' => $dbh]);
         $model          = new Products($container);
 
-        $model->newProduct([
+        $model->add([
             'name'       => '',
             'tags'       => '',
             'price'      => 0,
@@ -331,7 +331,7 @@ class ProductsUnitTest extends BaseTestCase
         $this->assertEquals($expectedParams, $stmt->getBindColumnParams(0));
     }
 
-    public function testNewBindValueParams()
+    public function testAddBindValueParams()
     {
         // expectation
         $expectedParams = [
@@ -352,7 +352,7 @@ class ProductsUnitTest extends BaseTestCase
         // model
         $model = new Products($container);
 
-        $model->newProduct([
+        $model->add([
             'name'       => 'MX-4 Thermal Compound',
             'tags'       => '["Computers", "CPU", "GPU"]',
             'price'      => 6.79,
@@ -364,7 +364,7 @@ class ProductsUnitTest extends BaseTestCase
         $this->assertEquals($expectedParams, $stmt->getBindValueParamsAll());
     }
 
-    public function testNewResult()
+    public function testAddResult()
     {
         $stmt      = new PDOStatement([
             'bindColumnReference' => [
@@ -377,7 +377,7 @@ class ProductsUnitTest extends BaseTestCase
         $container = new Container(['dbh' => $dbh]);
         $model     = new Products($container);
 
-        $result = $model->newProduct([
+        $result = $model->add([
             'name'       => '',
             'tags'       => '',
             'price'      => 0,
@@ -388,7 +388,7 @@ class ProductsUnitTest extends BaseTestCase
         $this->assertEquals(1, $result);
     }
 
-    public function testNewCallsExecute()
+    public function testAddCallsExecute()
     {
         $stmt      = new PDOStatement();
         $dbh       = new PDO([
@@ -397,7 +397,7 @@ class ProductsUnitTest extends BaseTestCase
         $container = new Container(['dbh' => $dbh]);
         $model     = new Products($container);
 
-        $model->newProduct([
+        $model->add([
             'name'       => '',
             'tags'       => '',
             'price'      => 0,
@@ -409,7 +409,7 @@ class ProductsUnitTest extends BaseTestCase
         $this->assertEquals([null], $stmt->getExecuteParams(0));
     }
 
-    public function testNewCallsFetch()
+    public function testAddCallsFetch()
     {
         $stmt      = new PDOStatement();
         $dbh       = new PDO([
@@ -418,7 +418,7 @@ class ProductsUnitTest extends BaseTestCase
         $container = new Container(['dbh' => $dbh]);
         $model     = new Products($container);
 
-        $model->newProduct([
+        $model->add([
             'name'       => '',
             'tags'       => '',
             'price'      => 0,

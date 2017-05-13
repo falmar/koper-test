@@ -78,14 +78,12 @@ class Products
     }
 
     /**
-     * Insert a new entity to the products table
-     * Observation: this method was originally called 'new', using php 7 change "Loosening Reserved Word"
-     * but PHPUnit was not able to generate coverage
+     * Add a new product to database
      *
      * @param array $data
      * @return int
      */
-    public function newProduct(array $data): int
+    public function add(array $data): int
     {
         /** @var \PDO $dbh */
         $dbh  = $this->container->get('dbh');
