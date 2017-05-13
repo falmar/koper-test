@@ -36,7 +36,7 @@ class ProductsUnitTest extends BaseTestCase
         $params[0] = $this->inlineSQLString($params[0]);
 
         $this->assertEquals(1, $dbh->getPrepareCallCount());
-        $this->assertEquals([$expectedQuery, null], [$params[0], $params[1]]);
+        $this->assertEquals([$expectedQuery, null], $params);
     }
 
     public function testGetListWithLimit()
@@ -62,7 +62,7 @@ class ProductsUnitTest extends BaseTestCase
         $params[0] = $this->inlineSQLString($params[0]);
 
         $this->assertEquals(1, $dbh->getPrepareCallCount());
-        $this->assertEquals([$expectedQuery, null], [$params[0], $params[1]]);
+        $this->assertEquals([$expectedQuery, null], $params);
     }
 
     public function testGetListWithLimitAndOffset()
@@ -90,7 +90,7 @@ class ProductsUnitTest extends BaseTestCase
         $params[0] = $this->inlineSQLString($params[0]);
 
         $this->assertEquals(1, $dbh->getPrepareCallCount());
-        $this->assertEquals([$expectedQuery, null], [$params[0], $params[1]]);
+        $this->assertEquals([$expectedQuery, null], $params);
     }
 
     public function testGetListWithOffsetNoLimit()
@@ -113,7 +113,7 @@ class ProductsUnitTest extends BaseTestCase
         $params[0] = $this->inlineSQLString($params[0]);
 
         $this->assertEquals(1, $dbh->getPrepareCallCount());
-        $this->assertEquals([$expectedQuery, null], [$params[0], $params[1]]);
+        $this->assertEquals([$expectedQuery, null], $params);
     }
 
     public function testGetListWithSortFieldAndOrder()
@@ -189,8 +189,8 @@ class ProductsUnitTest extends BaseTestCase
         $params1[0] = $this->inlineSQLString($params1[0]);
 
         $this->assertEquals(2, $dbh->getPrepareCallCount());
-        $this->assertEquals([$expectedQueries[0], null], [$params0[0], $params0[1]]);
-        $this->assertEquals([$expectedQueries[1], null], [$params1[0], $params1[1]]);
+        $this->assertEquals([$expectedQueries[0], null], $params0);
+        $this->assertEquals([$expectedQueries[1], null], $params1);
     }
 
     public function testGetListCallExecuteStatement()
@@ -325,7 +325,7 @@ class ProductsUnitTest extends BaseTestCase
         $params[0] = $this->inlineSQLString($params[0]);
 
         $this->assertEquals(1, $dbh->getPrepareCallCount());
-        $this->assertEquals([$expectedQuery, null], [$params[0], $params[1]]);
+        $this->assertEquals([$expectedQuery, null], $params);
     }
 
     public function testAddBindColumnParams()
@@ -452,21 +452,185 @@ class ProductsUnitTest extends BaseTestCase
 
     public function testAddLetExceptionsBeThrown()
     {
-        // PDO Expectations
-        $dbh = new PDO([
+        $dbh       = new PDO([
             'prepareThrowable' => [
                 function () {
                     throw new \PDOException('');
                 }
             ]
         ]);
-        // DI Container
         $container = new Container(['dbh' => $dbh]);
-        // class to test
-        $model = new Products($container);
+        $model     = new Products($container);
 
         $this->expectException(\PDOException::class);
 
         $model->add([]);
+    }
+
+    // update entity
+
+    public function testUpdateEarlyReturnOnBadIdParam()
+    {
+        $container = new Container([]);
+        $model     = new Products($container);
+
+        $result = $model->update(0, [
+            'name' => ''
+        ]);
+
+        $this->assertEquals(false, $result);
+    }
+
+    public function testUpdateEarlyReturnOnBadDataParam()
+    {
+        $container = new Container([]);
+        $model     = new Products($container);
+
+        $result = $model->update(1, []);
+
+        $this->assertEquals(false, $result);
+    }
+
+    public function testUpdateQuery()
+    {
+        $expectedParams = [
+            $this->inlineSQLString('
+              UPDATE product 
+              SET name = ?, tags = ?, price = ?, updated_at = ?
+              WHERE
+              id = ?;
+            '),
+            null
+        ];
+        $dbh            = new PDO();
+        $container      = new Container(['dbh' => $dbh]);
+        $model          = new Products($container);
+
+        $model->update(1, [
+            'name'       => '',
+            'tags'       => '',
+            'price '     => 0,
+            'updated_at' => ''
+        ]);
+
+        $params = $dbh->getPrepareParams(0);
+
+        $this->assertEquals(2, count($params));
+
+        $params[0] = $this->inlineSQLString($params[0]);
+
+        $this->assertEquals(1, $dbh->getPrepareCallCount());
+        $this->assertEquals($expectedParams, $params);
+    }
+
+    public function testUpdateBindParams()
+    {
+        $expectedParams = [
+            [1, 'Acer Aspire VX15 ', \PDO::PARAM_STR],
+            [2, '["Laptops", "Electronics", "Gaming"]', \PDO::PARAM_STR],
+            [3, 1049.99, \PDO::PARAM_STR],
+            [4, '2017-03-06T11:34:56Z', \PDO::PARAM_STR],
+            [5, 18, \PDO::PARAM_INT],
+        ];
+        $stmt           = new PDOStatement();
+        $dbh            = new PDO([
+            'bindCReturn' => [$stmt]
+        ]);
+        $container      = new Container(['dbh' => $dbh]);
+        $model          = new Products($container);
+
+        $model->update(18, [
+            'name'       => 'Acer Aspire VX15 ',
+            'tags'       => '["Laptops", "Electronics", "Gaming"]',
+            'price '     => 1049.99,
+            'updated_at' => '2017-03-06T11:34:56Z'
+        ]);
+
+        $this->assertEquals(5, $stmt->getBindValueCallCount());
+        $this->assertEquals($expectedParams, $stmt->getBindValueParamsAll());
+    }
+
+    public function testUpdateCallsExecute()
+    {
+        $expectedParams = [null];
+        $stmt           = new PDOStatement();
+        $dbh            = new PDO([
+            'prepareReturn' => [$stmt]
+        ]);
+        $container      = new Container(['dbh' => $dbh]);
+        $model          = new Products($container);
+
+        $model->update(1, [
+            'name'       => '',
+            'tags'       => '',
+            'price '     => 0,
+            'updated_at' => ''
+        ]);
+
+        $this->assertEquals(1, $stmt->getExecuteCallCount());
+        $this->assertEquals($expectedParams, $stmt->getExecuteParams(0));
+    }
+
+    public function testUpdateFalsyResultWhenNoRowsAffected()
+    {
+        $stmt      = new PDOStatement([
+            'rowCountReturn' => [
+                0
+            ]
+        ]);
+        $dbh       = new PDO([
+            'prepareReturn' => [$stmt]
+        ]);
+        $container = new Container(['dbh' => $dbh]);
+        $model     = new Products($container);
+
+        $result = $model->update(1, [
+            'name'       => '',
+            'tags'       => '',
+            'price '     => 0,
+            'updated_at' => ''
+        ]);
+
+        $this->assertEquals(false, $result);
+    }
+
+    public function testUpdateTruthyResultWhenRowsAffected()
+    {
+        $stmt      = new PDOStatement([
+            'rowCountReturn' => [
+                62
+            ]
+        ]);
+        $dbh       = new PDO([
+            'prepareReturn' => [$stmt]
+        ]);
+        $container = new Container(['dbh' => $dbh]);
+        $model     = new Products($container);
+
+        $result = $model->update(1, [
+            'name'       => '',
+            'tags'       => '',
+            'price '     => 0,
+            'updated_at' => ''
+        ]);
+
+        $this->assertEquals(true, $result);
+    }
+
+    public function testUpdateLetExceptionsBeThrown()
+    {
+        $dbh       = new PDO([
+            'prepareThrowable' => [
+                function () {
+                    throw new \PDOException('');
+                }
+            ]
+        ]);
+        $container = new Container(['dbh' => $dbh]);
+        $model     = new Products($container);
+
+        $this->expectException(\PDOException::class);
+
+        $model->update(1, ['name' => '']);
     }
 }
