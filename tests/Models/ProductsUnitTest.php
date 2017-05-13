@@ -509,7 +509,7 @@ class ProductsUnitTest extends BaseTestCase
         $model->update(1, [
             'name'       => '',
             'tags'       => '',
-            'price '     => 0,
+            'price'     => 0,
             'updated_at' => ''
         ]);
 
@@ -534,7 +534,7 @@ class ProductsUnitTest extends BaseTestCase
         ];
         $stmt           = new PDOStatement();
         $dbh            = new PDO([
-            'bindCReturn' => [$stmt]
+            'prepareReturn' => [$stmt]
         ]);
         $container      = new Container(['dbh' => $dbh]);
         $model          = new Products($container);
@@ -542,7 +542,7 @@ class ProductsUnitTest extends BaseTestCase
         $model->update(18, [
             'name'       => 'Acer Aspire VX15 ',
             'tags'       => '["Laptops", "Electronics", "Gaming"]',
-            'price '     => 1049.99,
+            'price'     => 1049.99,
             'updated_at' => '2017-03-06T11:34:56Z'
         ]);
 
@@ -563,7 +563,7 @@ class ProductsUnitTest extends BaseTestCase
         $model->update(1, [
             'name'       => '',
             'tags'       => '',
-            'price '     => 0,
+            'price'     => 0,
             'updated_at' => ''
         ]);
 
@@ -587,7 +587,7 @@ class ProductsUnitTest extends BaseTestCase
         $result = $model->update(1, [
             'name'       => '',
             'tags'       => '',
-            'price '     => 0,
+            'price'     => 0,
             'updated_at' => ''
         ]);
 
@@ -610,7 +610,7 @@ class ProductsUnitTest extends BaseTestCase
         $result = $model->update(1, [
             'name'       => '',
             'tags'       => '',
-            'price '     => 0,
+            'price'     => 0,
             'updated_at' => ''
         ]);
 
