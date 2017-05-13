@@ -272,6 +272,26 @@ class ProductsUnitTest extends BaseTestCase
         $this->assertEquals($expectedResult, $result);
     }
 
+    public function testGetListLetExceptionsBeThrown()
+    {
+        // PDO Expectations
+        $dbh = new PDO([
+            'prepareThrowable' => [
+                function () {
+                    throw new \PDOException('');
+                }
+            ]
+        ]);
+        // DI Container
+        $container = new Container(['dbh' => $dbh]);
+        // class to test
+        $model = new Products($container);
+
+        $this->expectException(\PDOException::class);
+
+        $model->getList();
+    }
+
     // --------------- add entity
 
     public function testAddPrepareQuery()
@@ -428,5 +448,25 @@ class ProductsUnitTest extends BaseTestCase
 
         $this->assertEquals(1, $stmt->getFetchCallCount());
         $this->assertEquals([null, \PDO::FETCH_ORI_NEXT, 0], $stmt->getFetchParams(0));
+    }
+
+    public function testAddLetExceptionsBeThrown()
+    {
+        // PDO Expectations
+        $dbh = new PDO([
+            'prepareThrowable' => [
+                function () {
+                    throw new \PDOException('');
+                }
+            ]
+        ]);
+        // DI Container
+        $container = new Container(['dbh' => $dbh]);
+        // class to test
+        $model = new Products($container);
+
+        $this->expectException(\PDOException::class);
+
+        $model->add([]);
     }
 }
