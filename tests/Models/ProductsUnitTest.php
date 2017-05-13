@@ -309,12 +309,12 @@ class ProductsUnitTest extends BaseTestCase
     {
         // expectation
         $expectedParams = [1, 'id', \PDO::PARAM_STR];
-        // PDO Expectations
-        $dbh = new PDO();
-        // DI Container
-        $container = new Container(['dbh' => $dbh]);
-        // model
-        $model = new Products($container);
+        $stmt           = new PDOStatement();
+        $dbh            = new PDO([
+            'prepareReturn' => [$stmt]
+        ]);
+        $container      = new Container(['dbh' => $dbh]);
+        $model          = new Products($container);
 
         $model->new([
             'name'       => '',
@@ -324,7 +324,8 @@ class ProductsUnitTest extends BaseTestCase
             'updated_at' => ''
         ]);
 
-        $this->assertEquals(true, false);
+        $this->assertEquals(1, $stmt->getBindColumnCallCount());
+        $this->assertEquals($expectedParams, $stmt->getBindColumnParams(0));
     }
 
     public function testNewBindValueParams()
@@ -356,7 +357,8 @@ class ProductsUnitTest extends BaseTestCase
             'updated_at' => '2017-05-05T18:45:00Z'
         ]);
 
-        $this->assertEquals(true, false);
+        $this->assertEquals(5, $stmt->getBindValueCallCount());
+        $this->assertEquals($expectedParams, $stmt->getBindValueParamsAll());
     }
 
     public function testNewResult()
