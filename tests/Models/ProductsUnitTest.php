@@ -311,7 +311,7 @@ class ProductsUnitTest extends BaseTestCase
     public function testAddBindColumnParams()
     {
         // expectation
-        $expectedParams = ['id', null, null, null, null];
+        $expectedParams = ['id', null, 1, null, null];
         $stmt           = new PDOStatement();
         $dbh            = new PDO([
             'prepareReturn' => [$stmt]
