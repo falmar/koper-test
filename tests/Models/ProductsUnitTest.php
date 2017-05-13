@@ -509,7 +509,7 @@ class ProductsUnitTest extends BaseTestCase
         $model->update(1, [
             'name'       => '',
             'tags'       => '',
-            'price'     => 0,
+            'price'      => 0,
             'updated_at' => ''
         ]);
 
@@ -542,7 +542,7 @@ class ProductsUnitTest extends BaseTestCase
         $model->update(18, [
             'name'       => 'Acer Aspire VX15 ',
             'tags'       => '["Laptops", "Electronics", "Gaming"]',
-            'price'     => 1049.99,
+            'price'      => 1049.99,
             'updated_at' => '2017-03-06T11:34:56Z'
         ]);
 
@@ -563,7 +563,7 @@ class ProductsUnitTest extends BaseTestCase
         $model->update(1, [
             'name'       => '',
             'tags'       => '',
-            'price'     => 0,
+            'price'      => 0,
             'updated_at' => ''
         ]);
 
@@ -587,7 +587,7 @@ class ProductsUnitTest extends BaseTestCase
         $result = $model->update(1, [
             'name'       => '',
             'tags'       => '',
-            'price'     => 0,
+            'price'      => 0,
             'updated_at' => ''
         ]);
 
@@ -610,7 +610,7 @@ class ProductsUnitTest extends BaseTestCase
         $result = $model->update(1, [
             'name'       => '',
             'tags'       => '',
-            'price'     => 0,
+            'price'      => 0,
             'updated_at' => ''
         ]);
 
@@ -632,5 +632,134 @@ class ProductsUnitTest extends BaseTestCase
         $this->expectException(\PDOException::class);
 
         $model->update(1, ['name' => '']);
+    }
+
+    // delete entity
+
+    public function testDeleteWithWrongIdParam()
+    {
+        $container = new Container([]);
+        $model     = new Products($container);
+
+        $result1 = $model->delete(0);
+        $result2 = $model->delete(-32);
+
+        $this->assertEquals(false, $result1);
+        $this->assertEquals(false, $result2);
+    }
+
+    public function testDeletePrepareAndQuery()
+    {
+        $expectedQuery = $this->inlineSQLString('DELETE FROM product WHERE id = ?;');
+        $dbh           = new PDO();
+        $container     = new Container(['dbh' => $dbh]);
+        $model         = new Products($container);
+
+        $model->delete(1);
+
+        $params = $dbh->getPrepareParams(0);
+
+        $this->assertEquals(2, count($params));
+
+        $params[0] = $this->inlineSQLString($params[0]);
+
+        $this->assertEquals(1, $dbh->getPrepareCallCount());
+        $this->assertEquals([$expectedQuery, null], $params);
+    }
+
+    public function testDeleteBindValue()
+    {
+        $expectedParams = [1, 1, \PDO::PARAM_INT];
+        $stmt           = new PDOStatement();
+        $dbh            = new PDO([
+            'prepareReturn' => [$stmt]
+        ]);
+        $container      = new Container(['dbh' => $dbh]);
+        $model          = new Products($container);
+
+        $model->delete(1);
+
+        $this->assertEquals(1, $stmt->getBindValueCallCount());
+        $this->assertEquals($expectedParams, $stmt->getBindValueParams(0));
+    }
+
+    public function testDeleteExecute()
+    {
+        $expectedParams = [null];
+        $stmt           = new PDOStatement();
+        $dbh            = new PDO([
+            'prepareReturn' => [$stmt]
+        ]);
+        $container      = new Container(['dbh' => $dbh]);
+        $model          = new Products($container);
+
+        $model->delete(1);
+
+        $this->assertEquals(1, $stmt->getExecuteCallCount());
+        $this->assertEquals($expectedParams, $stmt->getExecuteParams(0));
+    }
+
+    public function testDeleteRowCount()
+    {
+        $stmt           = new PDOStatement();
+        $dbh            = new PDO([
+            'prepareReturn' => [$stmt]
+        ]);
+        $container      = new Container(['dbh' => $dbh]);
+        $model          = new Products($container);
+
+        $model->delete(1);
+
+        $this->assertEquals(1, $stmt->getRowCountCallCount());
+        $this->assertEquals([], $stmt->getRowCountParams(0));
+    }
+
+    public function testDeleteFalsyWhenNoRowsAffected()
+    {
+        $stmt      = new PDOStatement([
+            'rowCountReturn' => [0]
+        ]);
+        $dbh       = new PDO([
+            'prepareReturn' => [$stmt]
+        ]);
+        $container = new Container(['dbh' => $dbh]);
+        $model     = new Products($container);
+
+        $result = $model->delete(1);
+
+        $this->assertFalse($result);
+    }
+
+    public function testDeleteTruthyWhenRowsAffected()
+    {
+        $stmt      = new PDOStatement([
+            'rowCountReturn' => [1]
+        ]);
+        $dbh       = new PDO([
+            'prepareReturn' => [$stmt]
+        ]);
+        $container = new Container(['dbh' => $dbh]);
+        $model     = new Products($container);
+
+        $result = $model->delete(1);
+
+        $this->assertTrue($result);
+    }
+
+    public function testDeleteLetExceptionsBeThrown()
+    {
+        $dbh       = new PDO([
+            'prepareThrowable' => [
+                function () {
+                    throw new \PDOException('');
+                }
+            ]
+        ]);
+        $container = new Container(['dbh' => $dbh]);
+        $model     = new Products($container);
+
+        $this->expectException(\PDOException::class);
+
+        $model->delete(1);
     }
 }
