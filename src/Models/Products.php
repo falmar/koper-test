@@ -109,4 +109,15 @@ class Products
 
         return $id ?? 0;
     }
+
+    /**
+     * Update product entity
+     * @param int $id
+     * @param array $data
+     * @return bool
+     */
+    public function update(int $id, array $data): bool
+    {
+        return false;
+    }
 }
