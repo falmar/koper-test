@@ -28,6 +28,10 @@ class PDOStatement extends \PDOStatement
     protected $bindValueParams = [];
     protected $bindValueReturn = [];
 
+    protected $rowCountCallCount = 0;
+    protected $rowCountParams = [];
+    protected $rowCountReturn = [];
+
     /**
      *  constructor.
      * @param array $expectations
@@ -348,5 +352,78 @@ class PDOStatement extends \PDOStatement
         $this->bindValueCallCount = 0;
         $this->bindValueParams    = [];
         $this->bindValueReturn    = [];
+    }
+
+    // ------------------------- rowCount
+
+    /**
+     * briefly simulates rowCount method call
+     * @return int
+     */
+    public function rowCount()
+    {
+        $result = false;
+
+        $this->rowCountParams[] = [];
+
+        if (count($this->rowCountReturn) && isset($this->rowCountReturn[$this->rowCountCallCount])) {
+            $result = $this->rowCountReturn[$this->rowCountCallCount];
+        }
+
+        $this->rowCountCallCount++;
+
+        return $result;
+    }
+
+    /**
+     * Get parameters used for  the  specified method call
+     * @param int $call
+     * @return array
+     * @throws \Exception if params not found for specified call
+     */
+    public function getRowCountParams($call)
+    {
+        if (!isset($this->rowCountParams[$call])) {
+            return [];
+        }
+
+        return $this->rowCountParams[$call];
+    }
+
+    /**
+     * Return all the params for the past method calls
+     * @return array
+     */
+    public function getRowCountParamsAll()
+    {
+        return $this->rowCountParams;
+    }
+
+    /**
+     * Set return values for the rowCount method calls
+     * @param array $returns
+     */
+    public function setRowCountReturn(array $returns = [])
+    {
+        $this->rowCountReturn = $returns;
+    }
+
+    /**
+     * Returns the amount of times the rowCount method was called
+     * @return int
+     */
+    public function getRowCountCallCount()
+    {
+        return $this->rowCountCallCount;
+    }
+
+    /**
+     * Reset abouts rowCount method
+     */
+    public function resetRowCount()
+    {
+        $this->rowCountCallCount = 0;
+        $this->rowCountParams    = [];
+        $this->rowCountReturn    = [];
     }
 }
