@@ -308,7 +308,7 @@ class ProductsUnitTest extends BaseTestCase
     public function testNewBindColumnParams()
     {
         // expectation
-        $expectedParams = [1, 'id', \PDO::PARAM_STR];
+        $expectedParams = ['id', null, null, null, null];
         $stmt           = new PDOStatement();
         $dbh            = new PDO([
             'prepareReturn' => [$stmt]
@@ -364,7 +364,9 @@ class ProductsUnitTest extends BaseTestCase
     public function testNewResult()
     {
         $stmt      = new PDOStatement([
-            'bindColumnReference' => [1]
+            'bindColumnReference' => [
+                [1]
+            ]
         ]);
         $dbh       = new PDO([
             'prepareReturn' => [$stmt]
