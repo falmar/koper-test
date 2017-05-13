@@ -52,7 +52,10 @@ class ProductsUnitTest extends BaseTestCase
         // test data
         $model->getList(['limit' => 5]);
 
-        $params    = $dbh->getPrepareParams(0);
+        $params = $dbh->getPrepareParams(0);
+
+        $this->assertEquals(2, count($params));
+
         $params[0] = $this->inlineSQLString($params[0]);
 
         $this->assertEquals(1, $dbh->getPrepareCallCount());
@@ -77,7 +80,10 @@ class ProductsUnitTest extends BaseTestCase
             'offset' => 20
         ]);
 
-        $params    = $dbh->getPrepareParams(0);
+        $params = $dbh->getPrepareParams(0);
+
+        $this->assertEquals(2, count($params));
+
         $params[0] = $this->inlineSQLString($params[0]);
 
         $this->assertEquals(1, $dbh->getPrepareCallCount());
@@ -97,7 +103,10 @@ class ProductsUnitTest extends BaseTestCase
         // test data
         $model->getList(['offset' => 20]);
 
-        $params    = $dbh->getPrepareParams(0);
+        $params = $dbh->getPrepareParams(0);
+
+        $this->assertEquals(2, count($params));
+
         $params[0] = $this->inlineSQLString($params[0]);
 
         $this->assertEquals(1, $dbh->getPrepareCallCount());
@@ -131,8 +140,12 @@ class ProductsUnitTest extends BaseTestCase
             'sortOrder' => 'DESC',
         ]);
 
-        $params0    = $dbh->getPrepareParams(0);
-        $params1    = $dbh->getPrepareParams(1);
+        $params0 = $dbh->getPrepareParams(0);
+        $params1 = $dbh->getPrepareParams(1);
+
+        $this->assertEquals(2, count($params0));
+        $this->assertEquals(2, count($params1));
+
         $params0[0] = $this->inlineSQLString($params0[0]);
         $params1[0] = $this->inlineSQLString($params1[0]);
 
@@ -163,8 +176,12 @@ class ProductsUnitTest extends BaseTestCase
         $model->getList(['sortField' => 'name']);
         $model->getList(['sortOrder' => 'DESC']);
 
-        $params0    = $dbh->getPrepareParams(0);
-        $params1    = $dbh->getPrepareParams(1);
+        $params0 = $dbh->getPrepareParams(0);
+        $params1 = $dbh->getPrepareParams(1);
+
+        $this->assertEquals(2, count($params0));
+        $this->assertEquals(2, count($params1));
+
         $params0[0] = $this->inlineSQLString($params0[0]);
         $params1[0] = $this->inlineSQLString($params1[0]);
 
@@ -278,7 +295,10 @@ class ProductsUnitTest extends BaseTestCase
             'updated_at' => ''
         ]);
 
-        $params    = $dbh->getPrepareParams(0);
+        $params = $dbh->getPrepareParams(0);
+
+        $this->assertEquals(2, count($params));
+
         $params[0] = $this->inlineSQLString($params[0]);
 
         $this->assertEquals(1, $dbh->getPrepareCallCount());
