@@ -78,6 +78,28 @@ class Products
 
     public function new(array $data): int
     {
-        return 0;
+        /** @var \PDO $dbh */
+        $dbh  = $this->container->get('dbh');
+        $ssql = '
+            INSERT INTO product
+            (name, tags, price, created_at, updated_at)
+            VALUES 
+            (?, ?, ?, ?, ?)
+            RETURNING id;
+        ';
+        $stmt = $dbh->prepare($ssql);
+
+        $stmt->bindColumn('id', $id, \PDO::PARAM_INT);
+
+        $stmt->bindValue(1, $data['name'], \PDO::PARAM_STR);
+        $stmt->bindValue(2, $data['tags'], \PDO::PARAM_STR);
+        $stmt->bindValue(3, $data['price'], \PDO::PARAM_STR);
+        $stmt->bindValue(4, $data['created_at'], \PDO::PARAM_STR);
+        $stmt->bindValue(5, $data['updated_at'], \PDO::PARAM_STR);
+
+        $stmt->execute();
+        $stmt->fetch();
+
+        return $id ?? 0;
     }
 }
