@@ -29,7 +29,10 @@ class ProductsUnitTest extends BaseTestCase
         // test data
         $model->getList();
 
-        $params    = $dbh->getPrepareParams(0);
+        $params = $dbh->getPrepareParams(0);
+
+        $this->assertEquals(2, count($params));
+
         $params[0] = $this->inlineSQLString($params[0]);
 
         $this->assertEquals(1, $dbh->getPrepareCallCount());
@@ -383,5 +386,47 @@ class ProductsUnitTest extends BaseTestCase
         ]);
 
         $this->assertEquals(1, $result);
+    }
+
+    public function testNewCallsExecute()
+    {
+        $stmt      = new PDOStatement();
+        $dbh       = new PDO([
+            'prepareReturn' => [$stmt]
+        ]);
+        $container = new Container(['dbh' => $dbh]);
+        $model     = new Products($container);
+
+        $model->new([
+            'name'       => '',
+            'tags'       => '',
+            'price'      => 0,
+            'created_at' => '',
+            'updated_at' => ''
+        ]);
+
+        $this->assertEquals(1, $stmt->getExecuteCallCount());
+        $this->assertEquals([null], $stmt->getExecuteParams(0));
+    }
+
+    public function testNewCallsFetch()
+    {
+        $stmt      = new PDOStatement();
+        $dbh       = new PDO([
+            'prepareReturn' => [$stmt]
+        ]);
+        $container = new Container(['dbh' => $dbh]);
+        $model     = new Products($container);
+
+        $model->new([
+            'name'       => '',
+            'tags'       => '',
+            'price'      => 0,
+            'created_at' => '',
+            'updated_at' => ''
+        ]);
+
+        $this->assertEquals(1, $stmt->getFetchCallCount());
+        $this->assertEquals([null, \PDO::FETCH_ORI_NEXT, 0], $stmt->getFetchParams(0));
     }
 }
