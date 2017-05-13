@@ -151,6 +151,18 @@ class Products
      */
     public function delete(int $id): bool
     {
-        return false;
+        if ($id <= 0) {
+            return false;
+        }
+
+        /** @var \PDO $dbh */
+        $dbh  = $this->container->get('dbh');
+        $ssql = 'DELETE FROM product WHERE id = ?;';
+        $stmt = $dbh->prepare($ssql);
+
+        $stmt->bindValue(1, $id, \PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->rowCount() > 0;
     }
 }
