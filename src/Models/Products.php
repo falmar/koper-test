@@ -143,4 +143,14 @@ class Products
 
         return $stmt->rowCount() > 0;
     }
+
+    /**
+     * Remove product from database
+     * @param int $id
+     * @return bool
+     */
+    public function delete(int $id): bool
+    {
+        return false;
+    }
 }
