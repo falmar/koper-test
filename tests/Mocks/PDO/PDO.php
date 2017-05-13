@@ -54,7 +54,7 @@ class PDO extends \PDO
     public function getPrepareParams($call)
     {
         if (!isset($this->prepareParams[$call])) {
-            throw new \Exception('No params found for the current call: ' . $call);
+            return [];
         }
 
         return $this->prepareParams[$call];
