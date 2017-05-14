@@ -12,6 +12,7 @@ cache:
     - vendor
 
 before_script:
+  - composer install
   - docker network create koper_test -d bridge
   - docker run -d --name postgres --network koper_test --network-alias postgres postgres:9.6.2
   - docker build -t koper_test -f test.dockerfile .
