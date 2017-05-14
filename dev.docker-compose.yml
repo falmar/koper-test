@@ -13,13 +13,13 @@ services:
   nginx:
     image: falmar/nginx:public
     links: ["php:php_app"]
-    ports: ["80:80"]
+    ports: ["8080:80"]
     depends_on:
       - php
     volumes_from:
       - ds
   php:
-    image: falmar/php:7-fpm
+    image: falmar/php:7-fpm-dev
     depends_on:
       - postgres
     volumes_from:
