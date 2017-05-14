@@ -55,7 +55,6 @@ class Product implements MigrationInterface
     {
         $products = [
             [
-                1,
                 'MX-4 Thermal Compound',
                 '["Computers", "CPU", "Heat"]',
                 6.59,
@@ -63,7 +62,6 @@ class Product implements MigrationInterface
                 '2017-05-15T14:00:00Z'
             ],
             [
-                2,
                 'Acer Aspire VX15',
                 '["Computers"]',
                 1049.99,
@@ -74,9 +72,9 @@ class Product implements MigrationInterface
 
         $stmt = $this->dbh->prepare(
             'INSERT INTO product 
-              (id, name, tags, price, created_at, updated_at)
+              (name, tags, price, created_at, updated_at)
              VALUES
-              (?, ?, ?, ?, ?, ?)'
+              (?, ?, ?, ?, ?)'
         );
 
         foreach ($products as $product) {
