@@ -18,7 +18,8 @@ before_script:
   - docker build -t koper_test -f test.dockerfile .
 
 script:
-  - docker run --rm -it --network koper_test koper_test
+  - docker run --name koper_php -it --network koper_test koper_test
 
 after_success:
+  - docker cp koper_php:/var/www/html/clover.xml ./
   - bash <(curl -s https://codecov.io/bash)
