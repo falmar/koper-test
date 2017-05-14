@@ -181,7 +181,7 @@ class ProductsUnitTest extends BaseTestCase
 
     public function testCountBindColumn()
     {
-        $expectedParams = [1, null, \PDO::PARAM_INT, null, null];
+        $expectedParams = [1, 0, \PDO::PARAM_INT, null, null];
         $stmt           = new PDOStatement();
         $dbh            = new PDO([
             'prepareReturn' => [$stmt]
