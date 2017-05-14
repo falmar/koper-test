@@ -54,7 +54,7 @@ class Products
      * @param array $params
      * @return array
      */
-    public function getList(array $params = []): array
+    public function collection(array $params = []): array
     {
         /** @var \PDO $dbh */
         $dbh      = $this->container->get('dbh');

@@ -163,7 +163,7 @@ class ProductsUnitTest extends BaseTestCase
 
     // get collection
 
-    public function testGetListWithEmptyParams()
+    public function testCollectionWithEmptyParams()
     {
         $expectedQuery = $this->inlineSQLString('SELECT id, name, tags, price, created_at, updated_at FROM product;');
         // PDO Expectations
@@ -174,7 +174,7 @@ class ProductsUnitTest extends BaseTestCase
         $model = new Products($container);
 
         // test data
-        $model->getList();
+        $model->collection();
 
         $params = $dbh->getPrepareParams(0);
 
@@ -186,7 +186,7 @@ class ProductsUnitTest extends BaseTestCase
         $this->assertEquals([$expectedQuery, null], $params);
     }
 
-    public function testGetListWithLimit()
+    public function testCollectionWithLimit()
     {
         $expectedQuery = $this->inlineSQLString(
             'SELECT id, name, tags, price, created_at, updated_at FROM product LIMIT 5;'
@@ -200,7 +200,7 @@ class ProductsUnitTest extends BaseTestCase
         $model = new Products($container);
 
         // test data
-        $model->getList(['limit' => 5]);
+        $model->collection(['limit' => 5]);
 
         $params = $dbh->getPrepareParams(0);
 
@@ -212,7 +212,7 @@ class ProductsUnitTest extends BaseTestCase
         $this->assertEquals([$expectedQuery, null], $params);
     }
 
-    public function testGetListWithLimitAndOffset()
+    public function testCollectionWithLimitAndOffset()
     {
         $expectedQuery = $this->inlineSQLString(
             'SELECT id, name, tags, price, created_at, updated_at FROM product LIMIT 5 OFFSET 20;'
@@ -225,7 +225,7 @@ class ProductsUnitTest extends BaseTestCase
         $model = new Products($container);
 
         // test data
-        $model->getList([
+        $model->collection([
             'limit'  => 5,
             'offset' => 20
         ]);
@@ -240,7 +240,7 @@ class ProductsUnitTest extends BaseTestCase
         $this->assertEquals([$expectedQuery, null], $params);
     }
 
-    public function testGetListWithOffsetNoLimit()
+    public function testCollectionWithOffsetNoLimit()
     {
         $expectedQuery = $this->inlineSQLString('SELECT id, name, tags, price, created_at, updated_at FROM product;');
         // PDO Expectations
@@ -251,7 +251,7 @@ class ProductsUnitTest extends BaseTestCase
         $model = new Products($container);
 
         // test data
-        $model->getList(['offset' => 20]);
+        $model->collection(['offset' => 20]);
 
         $params = $dbh->getPrepareParams(0);
 
@@ -263,7 +263,7 @@ class ProductsUnitTest extends BaseTestCase
         $this->assertEquals([$expectedQuery, null], $params);
     }
 
-    public function testGetListWithSortFieldAndOrder()
+    public function testCollectionWithSortFieldAndOrder()
     {
         $expectedQueries = [
             $this->inlineSQLString(
@@ -281,11 +281,11 @@ class ProductsUnitTest extends BaseTestCase
         $model = new Products($container);
 
         // test data
-        $model->getList([
+        $model->collection([
             'sortField' => 'name',
             'sortOrder' => 'ASC',
         ]);
-        $model->getList([
+        $model->collection([
             'sortField' => 'id',
             'sortOrder' => 'DESC',
         ]);
@@ -304,7 +304,7 @@ class ProductsUnitTest extends BaseTestCase
         $this->assertEquals([$expectedQueries[1], null], [$params1[0], $params1[1]]);
     }
 
-    public function testGetListWithOnlyOneSortFieldOrOrder()
+    public function testCollectionWithOnlyOneSortFieldOrOrder()
     {
         $expectedQueries = [
             $this->inlineSQLString(
@@ -323,8 +323,8 @@ class ProductsUnitTest extends BaseTestCase
         $model = new Products($container);
 
         // test data
-        $model->getList(['sortField' => 'name']);
-        $model->getList(['sortOrder' => 'DESC']);
+        $model->collection(['sortField' => 'name']);
+        $model->collection(['sortOrder' => 'DESC']);
 
         $params0 = $dbh->getPrepareParams(0);
         $params1 = $dbh->getPrepareParams(1);
@@ -340,7 +340,7 @@ class ProductsUnitTest extends BaseTestCase
         $this->assertEquals([$expectedQueries[1], null], $params1);
     }
 
-    public function testGetListCallExecuteStatement()
+    public function testCollectionCallExecuteStatement()
     {
         // PDOStatement Expectations
         $stmt = new PDOStatement();
@@ -353,13 +353,13 @@ class ProductsUnitTest extends BaseTestCase
         // class to test
         $model = new Products($container);
 
-        $model->getList();
+        $model->collection();
 
         $this->assertEquals(1, $stmt->getExecuteCallCount());
         $this->assertEquals([null], $stmt->getExecuteParams(0));
     }
 
-    public function testGetListCallFetchWithAssoc()
+    public function testCollectionCallFetchWithAssoc()
     {
         // PDOStatement Expectations
         $stmt = new PDOStatement([
@@ -382,7 +382,7 @@ class ProductsUnitTest extends BaseTestCase
             ['id' => 2, 'tags' => [], 'images' => []],
         ];
 
-        $result = $model->getList();
+        $result = $model->collection();
 
         $this->assertEquals(3, $stmt->getFetchCallCount());
         $this->assertEquals([\PDO::FETCH_ASSOC, \PDO::FETCH_ORI_NEXT, 0], $stmt->getFetchParams(0));
@@ -391,7 +391,7 @@ class ProductsUnitTest extends BaseTestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testGetListResult()
+    public function testCollectionResult()
     {
         // PDOStatement Expectations
         $stmt = new PDOStatement([
@@ -414,12 +414,12 @@ class ProductsUnitTest extends BaseTestCase
             ['id' => 2, 'name' => 'ArtiClean 1 & 2 30ml', 'tags' => [], 'images' => []]
         ];
 
-        $result = $model->getList();
+        $result = $model->collection();
 
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testGetListLetExceptionsBeThrown()
+    public function testCollectionLetExceptionsBeThrown()
     {
         // PDO Expectations
         $dbh = new PDO([
@@ -436,7 +436,7 @@ class ProductsUnitTest extends BaseTestCase
 
         $this->expectException(\PDOException::class);
 
-        $model->getList();
+        $model->collection();
     }
 
     // --------------- add entity
