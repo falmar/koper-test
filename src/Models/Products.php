@@ -57,7 +57,17 @@ class Products
      */
     public function count(): int
     {
-        return 0;
+        $count = 0;
+        /** @var \PDO $dbh */
+        $dbh = $this->container->get('dbh');
+
+        $stmt = $dbh->prepare('SELECT COUNT(*) FROM product;');
+
+        $stmt->bindColumn(1, $count, \PDO::PARAM_INT);
+        $stmt->execute();
+        $stmt->fetch();
+
+        return $count;
     }
 
     /**
