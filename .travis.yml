@@ -1,17 +1,23 @@
-
 language: php
 
 php:
   - "7.1"
   - "7"
 
+service:
+  - docker
+
 cache:
   directories:
     - vendor
 
+before_script:
+  - docker network create koper_test -d bridge
+  - docker run -d --name postgres --network koper_test --network-alias postgres postgres:9.6.2
+  - docker build -t koper_test -f test.dockerfile .
+
 script:
-  - composer install
-  - composer test
+  - docker run --rm -it --network koper_test koper_test
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

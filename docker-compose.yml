@@ -6,20 +6,21 @@ services:
     command: sh
     volumes:
       - ./:/usr/share/nginx/html
+  postgres:
+    image: postgres:9.6.2
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
   nginx:
     image: falmar/nginx:public
     links: ["php:php_app"]
     ports: ["8080:80"]
+    depends_on:
+      - php
     volumes_from:
       - ds
   php:
     image: falmar/php:7-fpm-dev
+    depends_on:
+      - postgres
     volumes_from:
       - ds
-    networks:
-      - default
-      - sql
-
-networks:
-  sql:
-    external: true
