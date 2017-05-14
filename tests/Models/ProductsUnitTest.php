@@ -16,6 +16,153 @@ use Tests\Mocks\PDO\PDOStatement;
 
 class ProductsUnitTest extends BaseTestCase
 {
+    // get entity
+
+    public function testGetWithBadIdParam()
+    {
+        $dbh       = new PDO();
+        $container = new Container(['dbh' => $dbh]);
+        $model     = new Products($container);
+
+        $result0 = $model->get(0);
+        $result1 = $model->get(-1);
+
+        $this->assertEquals([], $result0);
+        $this->assertEquals([], $result1);
+    }
+
+    public function testGetPrepareQuery()
+    {
+        $expectedQuery = $this->inlineSQLString('
+          SELECT 
+            id, name, tags, price, created_at, updated_at 
+          FROM product
+          WHERE id = ?;
+        ');
+        $dbh           = new PDO();
+        $container     = new Container(['dbh' => $dbh]);
+        $model         = new Products($container);
+
+        $model->get(1);
+
+        $params = $dbh->getPrepareParams(0);
+
+        $this->assertEquals(1, $dbh->getPrepareCallCount());
+        $this->assertEquals(2, count($params));
+
+        $params[0] = $this->inlineSQLString($params[0]);
+
+        $this->assertEquals([$expectedQuery, null], $params);
+    }
+
+    public function testGetBindValue()
+    {
+        $expectedParams = [1, 3942, \PDO::PARAM_INT];
+        $stmt           = new PDOStatement();
+        $dbh            = new PDO([
+            'prepareReturn' => [$stmt]
+        ]);
+        $container      = new Container(['dbh' => $dbh]);
+        $model          = new Products($container);
+
+        $model->get(3942);
+
+        $this->assertEquals(1, $stmt->getBindValueCallCount());
+        $this->assertEquals($expectedParams, $stmt->getBindValueParams(0));
+    }
+
+    public function testGetExecute()
+    {
+        $expectedParams = [null];
+        $stmt           = new PDOStatement();
+        $dbh            = new PDO([
+            'prepareReturn' => [$stmt]
+        ]);
+        $container      = new Container(['dbh' => $dbh]);
+        $model          = new Products($container);
+
+        $model->get(50);
+
+        $this->assertEquals(1, $stmt->getExecuteCallCount());
+        $this->assertEquals($expectedParams, $stmt->getExecuteParams(0));
+    }
+
+    public function testGetFetch()
+    {
+        $expectedParams = [\PDO::FETCH_ASSOC, \PDO::FETCH_ORI_NEXT, 0];
+        $stmt           = new PDOStatement();
+        $dbh            = new PDO([
+            'prepareReturn' => [$stmt]
+        ]);
+        $container      = new Container(['dbh' => $dbh]);
+        $model          = new Products($container);
+
+        $model->get(5);
+
+        $this->assertEquals(1, $stmt->getFetchCallCount());
+        $this->assertEquals($expectedParams, $stmt->getFetchParams(0));
+    }
+
+    public function testGetFalsyResult()
+    {
+        $expectedResult = [];
+        $stmt           = new PDOStatement([
+            'fetchReturn' => [
+                false
+            ]
+        ]);
+        $dbh            = new PDO([
+            'prepareReturn' => [$stmt]
+        ]);
+        $container      = new Container(['dbh' => $dbh]);
+        $model          = new Products($container);
+
+        $result = $model->get(5);
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    public function testGetTruthyResult()
+    {
+        $expectedResult = ['id' => 1, 'name' => 'Marvo CoolingPad'];
+        $stmt           = new PDOStatement([
+            'fetchReturn' => [
+                ['id' => 1, 'name' => 'Marvo CoolingPad']
+            ]
+        ]);
+        $dbh            = new PDO([
+            'prepareReturn' => [$stmt]
+        ]);
+        $container      = new Container(['dbh' => $dbh]);
+        $model          = new Products($container);
+
+        $result = $model->get(5);
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    public function testGetLetExceptionsBeThrown()
+    {
+        // PDO Expectations
+        $dbh = new PDO([
+            'prepareThrowable' => [
+                function () {
+                    throw new \PDOException('');
+                }
+            ]
+        ]);
+        // DI Container
+        $container = new Container(['dbh' => $dbh]);
+        // class to test
+        $model = new Products($container);
+
+        $this->expectException(\PDOException::class);
+
+        $model->get(1);
+    }
+
+    // get collection
+
     public function testGetListWithEmptyParams()
     {
         $expectedQuery = $this->inlineSQLString('SELECT id, name, tags, price, created_at, updated_at FROM product;');
@@ -212,7 +359,7 @@ class ProductsUnitTest extends BaseTestCase
         $this->assertEquals([null], $stmt->getExecuteParams(0));
     }
 
-    public function testGetListCallFetchWidthAssoc()
+    public function testGetListCallFetchWithAssoc()
     {
         // PDOStatement Expectations
         $stmt = new PDOStatement([
@@ -701,12 +848,12 @@ class ProductsUnitTest extends BaseTestCase
 
     public function testDeleteRowCount()
     {
-        $stmt           = new PDOStatement();
-        $dbh            = new PDO([
+        $stmt      = new PDOStatement();
+        $dbh       = new PDO([
             'prepareReturn' => [$stmt]
         ]);
-        $container      = new Container(['dbh' => $dbh]);
-        $model          = new Products($container);
+        $container = new Container(['dbh' => $dbh]);
+        $model     = new Products($container);
 
         $model->delete(1);
 
