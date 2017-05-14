@@ -143,18 +143,139 @@ class ProductsUnitTest extends BaseTestCase
 
     public function testGetLetExceptionsBeThrown()
     {
-        // PDO Expectations
-        $dbh = new PDO([
+        $dbh       = new PDO([
             'prepareThrowable' => [
                 function () {
                     throw new \PDOException('');
                 }
             ]
         ]);
-        // DI Container
         $container = new Container(['dbh' => $dbh]);
-        // class to test
-        $model = new Products($container);
+        $model     = new Products($container);
+
+        $this->expectException(\PDOException::class);
+
+        $model->get(1);
+    }
+
+    // count total amount
+
+    public function testCountPrepareQuery()
+    {
+        $expectedQuery = $this->inlineSQLString('SELECT COUNT(*) FROM product;');
+        $dbh           = new PDO();
+        $container     = new Container(['dbh' => $dbh]);
+        $model         = new Products($container);
+
+        $model->count();
+
+        $params = $dbh->getPrepareParams(0);
+
+        $this->assertEquals(1, $dbh->getPrepareCallCount());
+        $this->assertEquals(2, count($params));
+
+        $params[0] = $this->inlineSQLString($params[0]);
+
+        $this->assertEquals([$expectedQuery, null], $params);
+    }
+
+    public function testCountBindColumn()
+    {
+        $expectedParams = [1, null, \PDO::PARAM_INT, null, null];
+        $stmt           = new PDOStatement();
+        $dbh            = new PDO([
+            'prepareReturn' => [$stmt]
+        ]);
+        $container      = new Container(['dbh' => $dbh]);
+        $model          = new Products($container);
+
+        $model->count();
+
+        $this->assertEquals(1, $stmt->getBindColumnCallCount());
+        $this->assertEquals($expectedParams, $stmt->getBindColumnParams(0));
+    }
+
+    public function testCountExecute()
+    {
+        $expectedParams = [null];
+        $stmt           = new PDOStatement();
+        $dbh            = new PDO([
+            'prepareReturn' => [$stmt]
+        ]);
+        $container      = new Container(['dbh' => $dbh]);
+        $model          = new Products($container);
+
+        $model->count();
+
+        $this->assertEquals(1, $stmt->getExecuteCallCount());
+        $this->assertEquals($expectedParams, $stmt->getExecuteParams(0));
+    }
+
+    public function testCountFetch()
+    {
+        $expectedParams = [null, \PDO::FETCH_ORI_NEXT, 0];
+        $stmt           = new PDOStatement();
+        $dbh            = new PDO([
+            'prepareReturn' => [$stmt]
+        ]);
+        $container      = new Container(['dbh' => $dbh]);
+        $model          = new Products($container);
+
+        $model->count();
+
+        $this->assertEquals(1, $stmt->getFetchCallCount());
+        $this->assertEquals($expectedParams, $stmt->getFetchParams(0));
+    }
+
+    public function testCountFalsyResult()
+    {
+        $expectedResult = 0;
+        $stmt           = new PDOStatement([
+            'bindColumnReference' => [
+                [0]
+            ]
+        ]);
+        $dbh            = new PDO([
+            'prepareReturn' => [$stmt]
+        ]);
+        $container      = new Container(['dbh' => $dbh]);
+        $model          = new Products($container);
+
+        $result = $model->count();
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    public function testCountTruthyResult()
+    {
+        $expectedResult = 76;
+        $stmt           = new PDOStatement([
+            'bindColumnReference' => [
+                [76]
+            ]
+        ]);
+        $dbh            = new PDO([
+            'prepareReturn' => [$stmt]
+        ]);
+        $container      = new Container(['dbh' => $dbh]);
+        $model          = new Products($container);
+
+        $result = $model->count();
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    public function testCountLetExceptionsBeThrown()
+    {
+        $dbh       = new PDO([
+            'prepareThrowable' => [
+                function () {
+                    throw new \PDOException('');
+                }
+            ]
+        ]);
+        $container = new Container(['dbh' => $dbh]);
+        $model     = new Products($container);
 
         $this->expectException(\PDOException::class);
 
