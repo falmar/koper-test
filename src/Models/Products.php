@@ -50,7 +50,20 @@ class Products
     }
 
     /**
+     * Return the total amount of products
+     * TODO: filtering
+     *
+     * @return int
+     */
+    public function count(): int
+    {
+        return 0;
+    }
+
+    /**
      * Get the products from database
+     * TODO: filtering
+     *
      * @param array $params
      * @return array
      */
