@@ -22,6 +22,16 @@ class Products
     }
 
     /**
+     * Get an entity from database
+     * @param int $id
+     * @return array
+     */
+    public function get(int $id): array
+    {
+        return [];
+    }
+
+    /**
      * Get the products from database
      * @param array $params
      * @return array
