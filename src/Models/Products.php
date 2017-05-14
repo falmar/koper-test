@@ -28,7 +28,25 @@ class Products
      */
     public function get(int $id): array
     {
-        return [];
+        if ($id <= 0) {
+            return [];
+        }
+
+        /** @var \PDO $dbh */
+        $dbh = $this->container->get('dbh');
+
+        $stmt = $dbh->prepare('SELECT id, name, tags, price, created_at, updated_at FROM product WHERE id = ?;');
+
+        $stmt->bindValue(1, $id, \PDO::PARAM_INT);
+        $stmt->execute();
+
+        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+        if (!$result) {
+            return [];
+        }
+
+        return $result;
     }
 
     /**
