@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 /**
  * Created by PhpStorm.
  * User: falmar
@@ -8,13 +9,18 @@
 
 namespace KoperTest\Controllers\Products;
 
+
 use Monolog\Logger;
 use Psr\Container\ContainerInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class ProductList
+
+class ProductsCollection
 {
+    /** @var ContainerInterface */
+    protected $container = null;
+
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;

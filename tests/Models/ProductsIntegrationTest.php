@@ -12,6 +12,7 @@ namespace Tests\Models;
 
 use KoperTest\db\Product;
 use KoperTest\Models\Products;
+use Tests\BaseTestCase;
 use Tests\Mocks\Container\Container;
 
 

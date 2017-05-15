@@ -10,6 +10,7 @@ declare(strict_types = 1);
 namespace Tests\Models;
 
 use KoperTest\Models\Products;
+use Tests\BaseTestCase;
 use Tests\Mocks\Container\Container;
 use Tests\Mocks\PDO\PDO;
 use Tests\Mocks\PDO\PDOStatement;

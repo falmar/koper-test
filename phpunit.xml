@@ -2,8 +2,14 @@
          verbose="true"
          bootstrap="tests/bootstrap.php">
     <testsuites>
-        <testsuite name="Models">
-            <directory>tests/Models</directory>
+        <testsuite name="Models - Unit">
+            <directory suffix="UnitTest.php">tests/Models</directory>
+        </testsuite>
+        <testsuite name="Models - Integration">
+            <directory suffix="IntegrationTest.php">tests/Models</directory>
+        </testsuite>
+        <testsuite name="Controllers - Integration">
+            <directory>tests/Controllers</directory>
         </testsuite>
     </testsuites>
     <filter>
