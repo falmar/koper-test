@@ -124,7 +124,7 @@ class ProductsUnitTest extends BaseTestCase
 
     public function testGetTruthyResult()
     {
-        $expectedResult = ['id' => 1, 'name' => 'Marvo CoolingPad'];
+        $expectedResult = ['id' => 1, 'name' => 'Marvo CoolingPad', 'tags' => '[]', 'price' => 0.0];
         $stmt           = new PDOStatement([
             'fetchReturn' => [
                 ['id' => 1, 'name' => 'Marvo CoolingPad']
@@ -499,8 +499,8 @@ class ProductsUnitTest extends BaseTestCase
         // class to test
         $model          = new Products($container);
         $expectedResult = [
-            ['id' => 1, 'tags' => [], 'images' => []],
-            ['id' => 2, 'tags' => [], 'images' => []],
+            ['id' => 1, 'tags' => '[]', 'price' => 0.0],
+            ['id' => 2, 'tags' => '[]', 'price' => 0.0]
         ];
 
         $result = $model->collection();
@@ -518,7 +518,7 @@ class ProductsUnitTest extends BaseTestCase
         $stmt = new PDOStatement([
             'fetchReturn' => [
                 ['id' => 1, 'name' => 'MX-4 Thermal Compound', 'tags' => '["Thermal", "Computers"]'],
-                ['id' => 2, 'name' => 'ArtiClean 1 & 2 30ml']
+                ['id' => 2, 'name' => 'ArtiClean 1 & 2 30ml', 'tags' => '[]']
             ]
         ]);
         // PDO Expectations
@@ -531,8 +531,8 @@ class ProductsUnitTest extends BaseTestCase
         $model = new Products($container);
 
         $expectedResult = [
-            ['id' => 1, 'name' => 'MX-4 Thermal Compound', 'tags' => ['Thermal', 'Computers'], 'images' => []],
-            ['id' => 2, 'name' => 'ArtiClean 1 & 2 30ml', 'tags' => [], 'images' => []]
+            ['id' => 1, 'name' => 'MX-4 Thermal Compound', 'tags' => '["Thermal", "Computers"]', 'price' => 0.0],
+            ['id' => 2, 'name' => 'ArtiClean 1 & 2 30ml', 'tags' => '[]', 'price' => 0.0]
         ];
 
         $result = $model->collection();

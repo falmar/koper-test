@@ -98,12 +98,7 @@ class ProductsIntegrationTest extends BaseTestCase
             [
                 'id'         => 1,
                 'name'       => 'MX-4 Thermal Compound',
-                'tags'       => [
-                    'Computers',
-                    'CPU',
-                    'Heat'
-                ],
-                'images'     => [],
+                'tags'       => '["Computers", "CPU", "Heat"]',
                 'price'      => 6.59,
                 'created_at' => '2017-05-15 14:00:00+00',
                 'updated_at' => '2017-05-15 14:00:00+00'
@@ -111,10 +106,7 @@ class ProductsIntegrationTest extends BaseTestCase
             [
                 'id'         => 2,
                 'name'       => 'Acer Aspire VX15',
-                'tags'       => [
-                    'Computers'
-                ],
-                'images'     => [],
+                'tags'       => '["Computers"]',
                 'price'      => 1049.99,
                 'created_at' => '2017-05-15 15:00:00+00',
                 'updated_at' => '2017-05-15 15:00:00+00'
@@ -135,12 +127,7 @@ class ProductsIntegrationTest extends BaseTestCase
             [
                 'id'         => 1,
                 'name'       => 'MX-4 Thermal Compound',
-                'tags'       => [
-                    'Computers',
-                    'CPU',
-                    'Heat'
-                ],
-                'images'     => [],
+                'tags'       => '["Computers", "CPU", "Heat"]',
                 'price'      => 6.59,
                 'created_at' => '2017-05-15 14:00:00+00',
                 'updated_at' => '2017-05-15 14:00:00+00'
@@ -163,10 +150,7 @@ class ProductsIntegrationTest extends BaseTestCase
             [
                 'id'         => 2,
                 'name'       => 'Acer Aspire VX15',
-                'tags'       => [
-                    'Computers'
-                ],
-                'images'     => [],
+                'tags'       => '["Computers"]',
                 'price'      => 1049.99,
                 'created_at' => '2017-05-15 15:00:00+00',
                 'updated_at' => '2017-05-15 15:00:00+00'
@@ -190,10 +174,7 @@ class ProductsIntegrationTest extends BaseTestCase
             [
                 'id'         => 2,
                 'name'       => 'Acer Aspire VX15',
-                'tags'       => [
-                    'Computers'
-                ],
-                'images'     => [],
+                'tags'       => '["Computers"]',
                 'price'      => 1049.99,
                 'created_at' => '2017-05-15 15:00:00+00',
                 'updated_at' => '2017-05-15 15:00:00+00'
@@ -201,12 +182,7 @@ class ProductsIntegrationTest extends BaseTestCase
             [
                 'id'         => 1,
                 'name'       => 'MX-4 Thermal Compound',
-                'tags'       => [
-                    'Computers',
-                    'CPU',
-                    'Heat'
-                ],
-                'images'     => [],
+                'tags'       => '["Computers", "CPU", "Heat"]',
                 'price'      => 6.59,
                 'created_at' => '2017-05-15 14:00:00+00',
                 'updated_at' => '2017-05-15 14:00:00+00'
