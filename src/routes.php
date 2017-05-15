@@ -18,3 +18,6 @@ $indexHandler = function ($request, $response) {
 };
 
 $app->get('/', $indexHandler);
+
+// Products
+$app->get('/products/{id}', \KoperTest\Controllers\ProductsController::class . ':get');
