@@ -46,6 +46,9 @@ class Products
             return [];
         }
 
+        $result['price'] = (float)($result['price'] ?? 0);
+        $result['tags']  = $result['tags'] ?? '[]';
+
         return $result;
     }
 
@@ -120,8 +123,8 @@ class Products
 
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
             // perform any formatter if required
-            $row['tags']   = json_decode($row['tags'] ?? '[]');
-            $row['images'] = [];
+            $row['tags']  = $row['tags'] ?? '[]';
+            $row['price'] = (float)($row['price'] ?? 0);
 
             $results[] = $row;
         }
