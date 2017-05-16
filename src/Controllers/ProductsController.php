@@ -39,7 +39,7 @@ class ProductsController extends BaseController
         $logger    = $this->container->get('logger');
         $productId = (int)($args['id'] ?? 0);
 
-        $logger->info('/products/' . $productId);
+        $logger->info('GET /products/' . $productId);
 
         /** @var Response $response */
         $response = $response->withHeader('Content-Type', 'application/json;charset=utf-8');
@@ -78,6 +78,95 @@ class ProductsController extends BaseController
         } catch (\Error $e) {
             $logger->error($e->getMessage());
         } catch (\PDOException $e) {
+            $logger->error($e->getMessage());
+        } catch (\Exception $e) {
+            $logger->error($e->getMessage());
+        }
+
+        return $response->withStatus(500)->withJson([
+            'status'           => 500,
+            'developerMessage' => 'Internal Server Error.',
+            'userMessage'      => 'Unexpected error has occurred, try again later.',
+            'errorCode'        => '',
+            'moreInfo'         => ''
+        ]);
+    }
+
+    public function add(Request $request, Response $response)
+    {
+        /** @var Logger $logger */
+        $logger = $this->container->get('logger');
+
+        $logger->info('POST /products');
+
+        /** @var Response $response */
+        $response = $response->withHeader('Content-Type', 'application/json;charset=utf-8');
+
+        if (!$this->acceptsJSON($request->getHeaderLine('Accept'))) {
+            $logger->notice('Request must accept media-type: application/json');
+
+            return $response->withStatus(400)->withJson([
+                'status'           => 400,
+                'developerMessage' => 'Request must accept media-type: application/json.',
+                'userMessage'      => 'Bad Request.',
+                'errorCode'        => '',
+                'moreInfo'         => ''
+            ]);
+        }
+
+        if (!$this->isJSON($request->getHeaderLine('Content-Type'))) {
+            $logger->notice('Request must have Content-Type: application/json.');
+
+            return $response->withStatus(400)->withJson([
+                'status'           => 400,
+                'developerMessage' => 'Request must have Content-Type: application/json.',
+                'userMessage'      => 'Bad Request.',
+                'errorCode'        => '',
+                'moreInfo'         => ''
+            ]);
+        }
+
+        $product = $request->getParsedBody();
+
+        // $logger->error(json_last_error_msg(), $product);
+        // $logger->error(var_export(), $product);
+
+        if (
+            json_last_error() !== JSON_ERROR_NONE ||
+            !is_array($product) || (
+                !isset($product['name']) || empty($product['name']) ||
+                !isset($product['price']) || empty($product['price'])
+            )
+        ) {
+            $logger->notice('Request body or fields cannot be empty.');
+
+            return $response->withStatus(400)->withJson([
+                'status'           => 400,
+                'developerMessage' => 'Request body or fields cannot be empty.',
+                'userMessage'      => 'Bad Request.',
+                'errorCode'        => '',
+                'moreInfo'         => ''
+            ]);
+        }
+
+        try {
+            $now                   = (new \DateTime())->format(\DateTime::ATOM);
+            $product['tags']       = is_array($product['tags']) ? json_encode($product['tags']) : '[]';
+            $product['created_at'] = $now;
+            $product['updated_at'] = $now;
+
+            $model     = new Products($this->container);
+            $productId = $model->add($product);
+            $product   = $model->get($productId);
+
+            $product['tags'] = json_decode($product['tags']);
+
+            return $response->withJson($product)->withStatus(201);
+        } catch (\Error $e) {
+            $logger->error($e->getMessage());
+        } catch (\PDOException $e) {
+            $logger->error($e->getMessage());
+        } catch (\Exception $e) {
             $logger->error($e->getMessage());
         }
 

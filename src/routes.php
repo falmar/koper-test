@@ -1,23 +1,19 @@
 <?php
 // Routes
 
-/**
- * Index Handler
- * @var \Slim\Http\Request $request
- * @var \Slim\Http\Response $response
- *
- * @return \Slim\Http\Response
- */
-$indexHandler = function ($request, $response) {
-    /**  @var \Monolog\Logger $logger Sample log message */
-    $logger = $this->logger;
+// Migrate database when running dev mode
+$app->get('/migrate', function (\Slim\Http\Request $request, \Slim\Http\Response $response) {
+    if (getenv('SLIM_ENV') === 'production') {
+        return $response->withStatus(401);
+    }
 
-    $logger->info("Slim-Skeleton '/' route");
+    $product = new \KoperTest\db\Product($this->get('dbh'));
 
-    return $response->withStatus(404);
-};
-
-$app->get('/', $indexHandler);
+    $product->down();
+    $product->up();
+    $product->seed();
+});
 
 // Products
 $app->get('/products/{id}', \KoperTest\Controllers\ProductsController::class . ':get');
+$app->post('/products', \KoperTest\Controllers\ProductsController::class . ':add');
