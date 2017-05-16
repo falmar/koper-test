@@ -45,9 +45,15 @@ class ProductsController extends BaseController
         $response = $response->withHeader('Content-Type', 'application/json;charset=utf-8');
 
         if (!$this->acceptsJSON($request->getHeaderLine('Accept'))) {
-            $logger->notice('Request does not accept media-type: application/json');
+            $logger->notice('Request must accept media-type: application/json');
 
-            return $response->withStatus(406);
+            return $response->withStatus(406)->withJson([
+                'status'           => 406,
+                'developerMessage' => 'Request must accept media-type: application/json.',
+                'userMessage'      => 'Server couldn\'t provide a valid response.',
+                'errorCode'        => '',
+                'moreInfo'         => ''
+            ]);
         }
 
         try {
@@ -57,7 +63,13 @@ class ProductsController extends BaseController
             if (!$product) {
                 $logger->info('Product does not exist');
 
-                return $response->withStatus(404);
+                return $response->withStatus(404)->withJson([
+                    'status'           => 404,
+                    'developerMessage' => "Product ({$productId}) does not exist.",
+                    'userMessage'      => 'Product does not exist.',
+                    'errorCode'        => '',
+                    'moreInfo'         => ''
+                ]);
             }
 
             $product['tags'] = json_decode($product['tags']);
@@ -65,8 +77,16 @@ class ProductsController extends BaseController
             return $response->withJson($product);
         } catch (\Error $e) {
             $logger->error($e->getMessage());
+        } catch (\PDOException $e) {
+            $logger->error($e->getMessage());
         }
 
-        return $response->withStatus(500);
+        return $response->withStatus(500)->withJson([
+            'status'           => 500,
+            'developerMessage' => 'Internal Server Error.',
+            'userMessage'      => 'Unexpected error has occurred, try again later.',
+            'errorCode'        => '',
+            'moreInfo'         => ''
+        ]);
     }
 }
