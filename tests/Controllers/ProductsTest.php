@@ -39,7 +39,7 @@ class ProductsTest extends BaseTestCase
         self::$migration->down();
     }
 
-    public function testGetJSONContentType()
+    public function testGetJSONContentTypeResponse()
     {
         /** @var Request $request */
         $request  = $this->createRequest('GET', '/products/1');
@@ -56,7 +56,12 @@ class ProductsTest extends BaseTestCase
         $request  = $request->withHeader('Accept', '');
         $response = $this->runApp($request);
 
+        $bodyString = (string)$response->getBody();
+        $body       = json_decode($bodyString, true);
+
         $this->assertEquals(406, $response->getStatusCode());
+        $this->assertContains('Request must accept media-type: application/json', $body['developerMessage']);
+        $this->assertContains('Server couldn\'t provide a valid response.', $body['userMessage']);
     }
 
     public function testGetNotAcceptableWhenBadAcceptHeaderProvided()
@@ -66,7 +71,12 @@ class ProductsTest extends BaseTestCase
         $request  = $request->withHeader('Accept', 'application/xml');
         $response = $this->runApp($request);
 
+        $bodyString = (string)$response->getBody();
+        $body       = json_decode($bodyString, true);
+
         $this->assertEquals(406, $response->getStatusCode());
+        $this->assertContains('Request must accept media-type: application/json', $body['developerMessage']);
+        $this->assertContains('Server couldn\'t provide a valid response.', $body['userMessage']);
     }
 
     public function testGetAcceptMediaTypeWildcard()
@@ -96,7 +106,12 @@ class ProductsTest extends BaseTestCase
         $request  = $request->withHeader('Accept', 'application/json');
         $response = $this->runApp($request);
 
+        $bodyString = (string)$response->getBody();
+        $body       = json_decode($bodyString, true);
+
         $this->assertEquals(404, $response->getStatusCode());
+        $this->assertContains('Product (5) does not exist', $body['developerMessage']);
+        $this->assertContains('Product does not exist', $body['userMessage']);
     }
 
     public function testGetBody()
@@ -118,5 +133,22 @@ class ProductsTest extends BaseTestCase
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals($expectedBody, json_decode($body, true));
+    }
+
+    public function testGetError500()
+    {
+        self::$dbh->exec('DROP TABLE product');
+
+        /** @var Request $request */
+        $request  = $this->createRequest('GET', '/products/1');
+        $request  = $request->withHeader('Accept', 'application/json');
+        $response = $this->runApp($request);
+
+        $bodyString = (string)$response->getBody();
+        $body       = json_decode($bodyString, true);
+
+        $this->assertEquals(500, $response->getStatusCode());
+        $this->assertContains('Internal Server Error.', $body['developerMessage']);
+        $this->assertContains('Unexpected error has occurred, try again later.', $body['userMessage']);
     }
 }
