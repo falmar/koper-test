@@ -59,7 +59,7 @@ class ProductsTest extends BaseTestCase
         $bodyString = (string)$response->getBody();
         $body       = json_decode($bodyString, true);
 
-        $this->assertEquals(406, $response->getStatusCode());
+        $this->assertEquals(400, $response->getStatusCode());
         $this->assertContains('Request must accept media-type: application/json', $body['developerMessage']);
         $this->assertContains('Server couldn\'t provide a valid response.', $body['userMessage']);
     }
@@ -74,7 +74,7 @@ class ProductsTest extends BaseTestCase
         $bodyString = (string)$response->getBody();
         $body       = json_decode($bodyString, true);
 
-        $this->assertEquals(406, $response->getStatusCode());
+        $this->assertEquals(400, $response->getStatusCode());
         $this->assertContains('Request must accept media-type: application/json', $body['developerMessage']);
         $this->assertContains('Server couldn\'t provide a valid response.', $body['userMessage']);
     }
@@ -109,7 +109,7 @@ class ProductsTest extends BaseTestCase
         $bodyString = (string)$response->getBody();
         $body       = json_decode($bodyString, true);
 
-        $this->assertEquals(404, $response->getStatusCode());
+        $this->assertEquals(400, $response->getStatusCode());
         $this->assertContains('Product (5) does not exist', $body['developerMessage']);
         $this->assertContains('Product does not exist', $body['userMessage']);
     }

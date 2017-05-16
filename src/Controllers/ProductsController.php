@@ -47,8 +47,8 @@ class ProductsController extends BaseController
         if (!$this->acceptsJSON($request->getHeaderLine('Accept'))) {
             $logger->notice('Request must accept media-type: application/json');
 
-            return $response->withStatus(406)->withJson([
-                'status'           => 406,
+            return $response->withStatus(400)->withJson([
+                'status'           => 400,
                 'developerMessage' => 'Request must accept media-type: application/json.',
                 'userMessage'      => 'Server couldn\'t provide a valid response.',
                 'errorCode'        => '',
@@ -63,8 +63,8 @@ class ProductsController extends BaseController
             if (!$product) {
                 $logger->info('Product does not exist');
 
-                return $response->withStatus(404)->withJson([
-                    'status'           => 404,
+                return $response->withStatus(400)->withJson([
+                    'status'           => 400,
                     'developerMessage' => "Product ({$productId}) does not exist.",
                     'userMessage'      => 'Product does not exist.',
                     'errorCode'        => '',
