@@ -11,7 +11,6 @@ namespace Tests\Controllers;
 
 
 use KoperTest\db\Product;
-use Slim\Http\Request;
 use Tests\BaseTestCase;
 
 
@@ -41,7 +40,6 @@ class ProductsTest extends BaseTestCase
 
     public function testGetJSONContentTypeResponse()
     {
-        /** @var Request $request */
         $request  = $this->createRequest('GET', '/products/1');
         $request  = $request->withHeader('Accept', '');
         $response = $this->runApp($request);
@@ -51,7 +49,6 @@ class ProductsTest extends BaseTestCase
 
     public function testGetNotAcceptableWhenNotAcceptHeaderProvided()
     {
-        /** @var Request $request */
         $request  = $this->createRequest('GET', '/products/1');
         $request  = $request->withHeader('Accept', '');
         $response = $this->runApp($request);
@@ -66,7 +63,6 @@ class ProductsTest extends BaseTestCase
 
     public function testGetNotAcceptableWhenBadAcceptHeaderProvided()
     {
-        /** @var Request $request */
         $request  = $this->createRequest('GET', '/products/1');
         $request  = $request->withHeader('Accept', 'application/xml');
         $response = $this->runApp($request);
@@ -81,7 +77,6 @@ class ProductsTest extends BaseTestCase
 
     public function testGetAcceptMediaTypeWildcard()
     {
-        /** @var Request $request */
         $request  = $this->createRequest('GET', '/products/1');
         $request  = $request->withHeader('Accept', '*/*');
         $response = $this->runApp($request);
@@ -91,7 +86,6 @@ class ProductsTest extends BaseTestCase
 
     public function testGetAcceptMediaTypeJSON()
     {
-        /** @var Request $request */
         $request  = $this->createRequest('GET', '/products/1');
         $request  = $request->withHeader('Accept', 'application/json');
         $response = $this->runApp($request);
@@ -101,7 +95,6 @@ class ProductsTest extends BaseTestCase
 
     public function testGetNotFound()
     {
-        /** @var Request $request */
         $request  = $this->createRequest('GET', '/products/5');
         $request  = $request->withHeader('Accept', 'application/json');
         $response = $this->runApp($request);
@@ -124,10 +117,9 @@ class ProductsTest extends BaseTestCase
             'created_at' => '2017-05-15 14:00:00+00',
             'updated_at' => '2017-05-15 14:00:00+00'
         ];
-        /** @var Request $request */
-        $request  = $this->createRequest('GET', '/products/1');
-        $request  = $request->withHeader('Accept', 'application/json');
-        $response = $this->runApp($request);
+        $request      = $this->createRequest('GET', '/products/1');
+        $request      = $request->withHeader('Accept', 'application/json');
+        $response     = $this->runApp($request);
 
         $body = (string)$response->getBody();
 
@@ -139,7 +131,6 @@ class ProductsTest extends BaseTestCase
     {
         self::$dbh->exec('DROP TABLE product');
 
-        /** @var Request $request */
         $request  = $this->createRequest('GET', '/products/1');
         $request  = $request->withHeader('Accept', 'application/json');
         $response = $this->runApp($request);
@@ -150,5 +141,156 @@ class ProductsTest extends BaseTestCase
         $this->assertEquals(500, $response->getStatusCode());
         $this->assertContains('Internal Server Error.', $body['developerMessage']);
         $this->assertContains('Unexpected error has occurred, try again later.', $body['userMessage']);
+    }
+
+    public function testAddResponseContentTypeJSON()
+    {
+        $request  = $this->createRequest('POST', '/products');
+        $response = $this->runApp($request);
+
+        $this->assertContains('application/json', $response->getHeaderLine('Content-Type'));
+    }
+
+    public function testAddNotAcceptableWithBadAcceptHeader()
+    {
+        $request  = $this->createRequest('GET', '/products');
+        $request  = $request->withHeader('Accept', '');
+        $response = $this->runApp($request);
+
+        $bodyString = (string)$response->getBody();
+        $body       = json_decode($bodyString, true);
+
+        $this->assertEquals(400, $response->getStatusCode());
+        $this->assertContains('Request must accept media-type: application/json.', $body['developerMessage']);
+        $this->assertContains('Bad Request.', $body['userMessage']);
+    }
+
+    public function testAddRequestContentTypeJSON()
+    {
+        $request  = $this->createRequest('GET', '/products');
+        $request  = $request->withHeader('Accept', 'application/json');
+        $response = $this->runApp($request);
+
+        $bodyString = (string)$response->getBody();
+        $body       = json_decode($bodyString, true);
+
+        $this->assertEquals(400, $response->getStatusCode());
+        $this->assertContains('Request must have Content-Type: application/json.', $body['developerMessage']);
+        $this->assertContains('Bad Request.', $body['userMessage']);
+    }
+
+    public function testAddBadRequestEmptyBody()
+    {
+        $request  = $this->createRequest('POST', '/products');
+        $request  = $request->withHeader('Accept', 'application/json');
+        $request  = $request->withHeader('Content-Type', 'application/json');
+        $response = $this->runApp($request);
+
+        $bodyString = (string)$response->getBody();
+        $body       = json_decode($bodyString, true);
+
+        $this->assertEquals(400, $response->getStatusCode());
+        $this->assertContains('Request body cannot be empty.', $body['developerMessage']);
+        $this->assertContains('Bad Request.', $body['userMessage']);
+    }
+
+    public function testAddBadRequestEmptyBodyValues()
+    {
+        $body     = [];
+        $request  = $this->createRequest('POST', '/products', $body);
+        $request  = $request->withHeader('Accept', 'application/json');
+        $request  = $request->withHeader('Content-Type', 'application/json');
+        $response = $this->runApp($request);
+
+        $bodyString = (string)$response->getBody();
+        $body       = json_decode($bodyString, true);
+
+        $this->assertEquals(400, $response->getStatusCode());
+        $this->assertContains('Request body values cannot be empty.', $body['developerMessage']);
+        $this->assertContains('Bad Request.', $body['userMessage']);
+    }
+
+    public function testAddError500()
+    {
+        self::$dbh->exec('DROP TABLE product');
+
+        $body     = [
+            'name'  => 'ArtiClean 1&2 30ml',
+            'tags'  => ['CPU'],
+            'price' => 6.12
+        ];
+        $request  = $this->createRequest('POST', '/products', $body);
+        $request  = $request->withHeader('Accept', 'application/json');
+        $request  = $request->withHeader('Content-Type', 'application/json');
+        $response = $this->runApp($request);
+
+        $bodyString = (string)$response->getBody();
+        $body       = json_decode($bodyString, true);
+
+        $this->assertEquals(500, $response->getStatusCode());
+        $this->assertContains('Internal Server Error.', $body['developerMessage']);
+        $this->assertContains('Unexpected error has occurred, try again later.', $body['userMessage']);
+    }
+
+    public function testAddAcceptMediaTypeJSON()
+    {
+        $body    = [
+            'name'  => 'ArtiClean 1&2 30ml',
+            'tags'  => ['CPU'],
+            'price' => 6.12
+        ];
+        $request = $this->createRequest('POST', '/products', $body);
+        $request = $request->withHeader('Accept', 'application/json');
+        $request = $request->withHeader('Content-Type', 'application/json');
+
+        $response = $this->runApp($request);
+
+        $this->assertEquals(201, $response->getStatusCode());
+    }
+
+    public function testAddAcceptMediaTypeWildcard()
+    {
+        $body    = [
+            'name'  => 'ArtiClean 1&2 30ml',
+            'tags'  => ['CPU'],
+            'price' => 6.12
+        ];
+        $request = $this->createRequest('POST', '/products', $body);
+        $request = $request->withHeader('Accept', '*/*');
+        $request = $request->withHeader('Content-Type', 'application/json');
+
+        $response = $this->runApp($request);
+
+        $this->assertEquals(201, $response->getStatusCode());
+    }
+
+    public function testAddBodyResponse()
+    {
+        $body                = [
+            'name'  => 'ArtiClean 1&2 30ml',
+            'tags'  => ['CPU'],
+            'price' => 6.12
+        ];
+        $expectedDate        = new \DateTime();
+        $request             = $this->createRequest('POST', '/products', $body);
+        $request             = $request->withHeader('Accept', 'application/json');
+        $request             = $request->withHeader('Content-Type', 'application/json');
+        $response            = $this->runApp($request);
+        $expectedDateForward = new \DateTime();
+
+        $bodyString   = (string)$response->getBody();
+        $responseBody = json_decode($bodyString, true);
+
+        $createdAt   = $responseBody['created_at'];
+        $updatedAt   = $responseBody['updated_at'];
+        $createdDate = new \DateTime($createdAt);
+
+        $this->assertEquals(201, $response->getStatusCode());
+        $this->assertArraySubset($body, $responseBody);
+        $this->assertEquals($createdAt, $updatedAt);
+        $this->assertTrue(
+            $expectedDate < $createdDate &&
+            $expectedDateForward > $createdDate
+        );
     }
 }
