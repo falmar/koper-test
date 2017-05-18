@@ -510,4 +510,45 @@ class ProductsTest extends BaseTestCase
             $expectedDateForward >= $updatedDate
         );
     }
+
+    // delete entity
+
+    public function testDeleteBodyResponseNotExistentRow()
+    {
+        $request  = $this->createRequest('DELETE', '/products/5');
+        $response = $this->runApp($request);
+
+        $bodyString   = (string)$response->getBody();
+        $responseBody = json_decode($bodyString, true);
+
+        $this->assertEquals(500, $response->getStatusCode());
+        $this->assertContains('Product (5) does not exist.', $responseBody['developerMessage']);
+        $this->assertContains('Unexpected error has occurred, try again later.', $responseBody['userMessage']);
+    }
+
+    public function testDeleteError500()
+    {
+        self::$dbh->exec('DROP TABLE product');
+
+        $request  = $this->createRequest('DELETE', '/products/1');
+        $response = $this->runApp($request);
+
+        $bodyString = (string)$response->getBody();
+        $body       = json_decode($bodyString, true);
+
+        $this->assertEquals(500, $response->getStatusCode());
+        $this->assertContains('Internal Server Error.', $body['developerMessage']);
+        $this->assertContains('Unexpected error has occurred, try again later.', $body['userMessage']);
+    }
+
+    public function testDeleteBodyResponse()
+    {
+        $request  = $this->createRequest('DELETE', '/products/1');
+        $response = $this->runApp($request);
+
+        $body   = (string)$response->getBody();
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEmpty($body);
+    }
 }
