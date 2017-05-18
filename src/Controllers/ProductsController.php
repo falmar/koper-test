@@ -272,4 +272,49 @@ class ProductsController extends BaseController
             'moreInfo'         => ''
         ]);
     }
+
+    public function delete(Request $request, Response $response, array $args)
+    {
+        /** @var Logger $logger */
+        $logger    = $this->container->get('logger');
+        $productId = (int)($args['id'] ?? 0);
+
+        $logger->info('DELETE /products/' . $productId);
+
+        /** @var Response $response */
+        $response = $response->withHeader('Content-Type', 'application/json;charset=utf-8');
+
+        try {
+            $model           = new Products($this->container);
+            $existentProduct = $model->get($productId);
+
+            if (!count($existentProduct)) {
+                return $response->withStatus(500)->withJson([
+                    'status'           => 500,
+                    'developerMessage' => "Product ({$productId}) does not exist. Due to database capabilities new row can't be added.",
+                    'userMessage'      => 'Unexpected error has occurred, try again later.',
+                    'errorCode'        => '',
+                    'moreInfo'         => ''
+                ]);
+            }
+
+            $model->delete($productId);
+
+            return $response->withStatus(200);
+        } catch (\Error $e) {
+            $logger->error($e->getMessage());
+        } catch (\PDOException $e) {
+            $logger->error($e->getMessage());
+        } catch (\Exception $e) {
+            $logger->error($e->getMessage());
+        }
+
+        return $response->withStatus(500)->withJson([
+            'status'           => 500,
+            'developerMessage' => 'Internal Server Error.',
+            'userMessage'      => 'Unexpected error has occurred, try again later.',
+            'errorCode'        => '',
+            'moreInfo'         => ''
+        ]);
+    }
 }

@@ -18,3 +18,4 @@ $app->get('/migrate', function (\Slim\Http\Request $request, \Slim\Http\Response
 $app->get('/products/{id}', \KoperTest\Controllers\ProductsController::class . ':get');
 $app->post('/products', \KoperTest\Controllers\ProductsController::class . ':add');
 $app->put('/products/{id}', \KoperTest\Controllers\ProductsController::class . ':update');
+$app->delete('/products/{id}', \KoperTest\Controllers\ProductsController::class . ':delete');
