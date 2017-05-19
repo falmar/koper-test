@@ -15,6 +15,7 @@ if (getenv('SLIM_ENV') !== 'production') {
 }
 
 // Products
+$app->get('/products', \KoperTest\Controllers\ProductsController::class . ':collection');
 $app->get('/products/{id}', \KoperTest\Controllers\ProductsController::class . ':get');
 $app->post('/products', \KoperTest\Controllers\ProductsController::class . ':add');
 $app->put('/products/{id}', \KoperTest\Controllers\ProductsController::class . ':update');

@@ -92,6 +92,84 @@ class ProductsController extends BaseController
         ]);
     }
 
+    /**
+     * @param Request $request
+     * @param Response $response
+     * @return Response
+     */
+    public function collection(Request $request, Response $response)
+    {
+        /** @var Logger $logger */
+        $logger = $this->container->get('logger');
+
+        $logger->info('GET /products');
+
+        /** @var Response $response */
+        $response = $response->withHeader('Content-Type', 'application/json;charset=utf-8');
+
+        if (!$this->acceptsJSON($request->getHeaderLine('Accept'))) {
+            $logger->notice('Request must accept media-type: application/json');
+
+            return $response->withStatus(400)->withJson([
+                'status'           => 400,
+                'developerMessage' => 'Request must accept media-type: application/json.',
+                'userMessage'      => 'Server couldn\'t provide a valid response.',
+                'errorCode'        => '',
+                'moreInfo'         => ''
+            ]);
+        }
+
+        try {
+            $limit     = (int)$request->getParam('limit', null);
+            $offset    = (int)$request->getParam('offset', null);
+            $sortField = $request->getParam('sortField', null);
+            $sortOrder = $request->getParam('sortOrder', null);
+
+            $model = new Products($this->container);
+
+            $results = $model->collection([
+                'limit'     => $limit ? $limit : 25,
+                'offset'    => $offset,
+                'sortField' => $sortField,
+                'sortOrder' => $sortOrder,
+            ]);
+
+            foreach ($results as $k => $result) {
+                $result[$k]['tags'] = json_decode($result['tags']);
+            }
+
+            return $response->withJson([
+                'metadata' => [
+                    'resultset' => [
+                        'count'  => $model->count(),
+                        'limit'  => $limit ? $limit : 25,
+                        'offset' => $offset
+                    ]
+                ],
+                'results'  => $results
+            ]);
+        } catch (\Error $e) {
+            $logger->error($e->getMessage());
+        } catch (\PDOException $e) {
+            $logger->error($e->getMessage());
+        } catch (\Exception $e) {
+            $logger->error($e->getMessage());
+        }
+
+        return $response->withStatus(500)->withJson([
+            'status'           => 500,
+            'developerMessage' => 'Internal Server Error.',
+            'userMessage'      => 'Unexpected error has occurred, try again later.',
+            'errorCode'        => '',
+            'moreInfo'         => ''
+        ]);
+    }
+
+    /**
+     * @param Request $request
+     * @param Response $response
+     * @return Response
+     */
     public function add(Request $request, Response $response)
     {
         /** @var Logger $logger */
