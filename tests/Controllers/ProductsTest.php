@@ -546,9 +546,152 @@ class ProductsTest extends BaseTestCase
         $request  = $this->createRequest('DELETE', '/products/1');
         $response = $this->runApp($request);
 
-        $body   = (string)$response->getBody();
+        $body = (string)$response->getBody();
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEmpty($body);
+    }
+
+    // test collection
+
+    public function testCollectionJSONContentTypeResponse()
+    {
+        $request  = $this->createRequest('GET', '/products');
+        $request  = $request->withHeader('Accept', '');
+        $response = $this->runApp($request);
+
+        $this->assertContains('application/json', $response->getHeaderLine('Content-Type'));
+    }
+
+    public function testCollectionNotAcceptableWhenNotAcceptHeaderProvided()
+    {
+        $request  = $this->createRequest('GET', '/products');
+        $request  = $request->withHeader('Accept', '');
+        $response = $this->runApp($request);
+
+        $bodyString = (string)$response->getBody();
+        $body       = json_decode($bodyString, true);
+
+        $this->assertEquals(400, $response->getStatusCode());
+        $this->assertContains('Request must accept media-type: application/json', $body['developerMessage']);
+        $this->assertContains('Server couldn\'t provide a valid response.', $body['userMessage']);
+    }
+
+    public function testCollectionNotAcceptableWhenBadAcceptHeaderProvided()
+    {
+        $request  = $this->createRequest('GET', '/products');
+        $request  = $request->withHeader('Accept', 'application/xml');
+        $response = $this->runApp($request);
+
+        $bodyString = (string)$response->getBody();
+        $body       = json_decode($bodyString, true);
+
+        $this->assertEquals(400, $response->getStatusCode());
+        $this->assertContains('Request must accept media-type: application/json', $body['developerMessage']);
+        $this->assertContains('Server couldn\'t provide a valid response.', $body['userMessage']);
+    }
+
+    public function testCollectionAcceptMediaTypeWildcard()
+    {
+        $request  = $this->createRequest('GET', '/products');
+        $request  = $request->withHeader('Accept', '*/*');
+        $response = $this->runApp($request);
+
+        $this->assertEquals(200, $response->getStatusCode());
+    }
+
+    public function testCollectionAcceptMediaTypeJSON()
+    {
+        $request  = $this->createRequest('GET', '/products');
+        $request  = $request->withHeader('Accept', 'application/json');
+        $response = $this->runApp($request);
+
+        $this->assertEquals(200, $response->getStatusCode());
+    }
+
+    public function testCollectionError500()
+    {
+        self::$dbh->exec('DROP TABLE product');
+
+        $request  = $this->createRequest('GET', '/products');
+        $request  = $request->withHeader('Accept', 'application/json');
+        $response = $this->runApp($request);
+
+        $bodyString = (string)$response->getBody();
+        $body       = json_decode($bodyString, true);
+
+        $this->assertEquals(500, $response->getStatusCode());
+        $this->assertContains('Internal Server Error.', $body['developerMessage']);
+        $this->assertContains('Unexpected error has occurred, try again later.', $body['userMessage']);
+    }
+
+    public function testCollectionBody()
+    {
+        $expectedBody = [
+            'metadata' => [
+                'resultset' => [
+                    'count'  => 2,
+                    'limit'  => 25,
+                    'offset' => 0
+                ]
+            ],
+            'results'  => [
+                [
+                    'id'         => 1,
+                    'name'       => 'MX-4 Thermal Compound',
+                    'tags'       => '["Computers", "CPU", "Heat"]',
+                    'price'      => 6.59,
+                    'created_at' => '2017-05-15 14:00:00+00',
+                    'updated_at' => '2017-05-15 14:00:00+00'
+                ],
+                [
+                    'id'         => 2,
+                    'name'       => 'Acer Aspire VX15',
+                    'tags'       => '["Computers"]',
+                    'price'      => 1049.99,
+                    'created_at' => '2017-05-15 15:00:00+00',
+                    'updated_at' => '2017-05-15 15:00:00+00'
+                ]
+            ]
+        ];
+        $request      = $this->createRequest('GET', '/products');
+        $request      = $request->withHeader('Accept', 'application/json');
+        $response     = $this->runApp($request);
+
+        $body = (string)$response->getBody();
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals($expectedBody, json_decode($body, true));
+    }
+
+    public function testCollectionBodyLimitAndSort()
+    {
+        $expectedBody = [
+            'metadata' => [
+                'resultset' => [
+                    'count'  => 2,
+                    'limit'  => 1,
+                    'offset' => 1
+                ]
+            ],
+            'results'  => [
+                [
+                    'id'         => 1,
+                    'name'       => 'MX-4 Thermal Compound',
+                    'tags'       => '["Computers", "CPU", "Heat"]',
+                    'price'      => 6.59,
+                    'created_at' => '2017-05-15 14:00:00+00',
+                    'updated_at' => '2017-05-15 14:00:00+00'
+                ]
+            ]
+        ];
+        $request      = $this->createRequest('GET', '/products?limit=1&offset=1&sortField=updated_at&sortOrder=desc');
+        $request      = $request->withHeader('Accept', 'application/json');
+        $response     = $this->runApp($request);
+
+        $body = (string)$response->getBody();
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals($expectedBody, json_decode($body, true));
     }
 }
