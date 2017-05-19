@@ -287,7 +287,7 @@ class ProductsUnitTest extends BaseTestCase
 
     public function testCollectionWithEmptyParams()
     {
-        $expectedQuery = $this->inlineSQLString('SELECT id, name, tags, price, created_at, updated_at FROM product;');
+        $expectedQuery = $this->inlineSQLString('SELECT id, name, tags, price, created_at, updated_at FROM product LIMIT 25;');
         // PDO Expectations
         $dbh = new PDO();
         // DI Container
@@ -364,7 +364,9 @@ class ProductsUnitTest extends BaseTestCase
 
     public function testCollectionWithOffsetNoLimit()
     {
-        $expectedQuery = $this->inlineSQLString('SELECT id, name, tags, price, created_at, updated_at FROM product;');
+        $expectedQuery = $this->inlineSQLString(
+            'SELECT id, name, tags, price, created_at, updated_at FROM product LIMIT 25 OFFSET 20;'
+        );
         // PDO Expectations
         $dbh = new PDO();
         // DI Container
@@ -389,10 +391,10 @@ class ProductsUnitTest extends BaseTestCase
     {
         $expectedQueries = [
             $this->inlineSQLString(
-                'SELECT id, name, tags, price, created_at, updated_at FROM product ORDER BY name ASC;'
+                'SELECT id, name, tags, price, created_at, updated_at FROM product ORDER BY name ASC LIMIT 25;'
             ),
             $this->inlineSQLString(
-                'SELECT id, name, tags, price, created_at, updated_at FROM product ORDER BY id DESC;'
+                'SELECT id, name, tags, price, created_at, updated_at FROM product ORDER BY id DESC LIMIT 25;'
             )
         ];
         // PDO Expectations
@@ -430,10 +432,10 @@ class ProductsUnitTest extends BaseTestCase
     {
         $expectedQueries = [
             $this->inlineSQLString(
-                'SELECT id, name, tags, price, created_at, updated_at FROM product;'
+                'SELECT id, name, tags, price, created_at, updated_at FROM product LIMIT 25;'
             ),
             $this->inlineSQLString(
-                'SELECT id, name, tags, price, created_at, updated_at FROM product;'
+                'SELECT id, name, tags, price, created_at, updated_at FROM product LIMIT 25;'
             )
         ];
         // PDO Expectations
