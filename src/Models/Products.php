@@ -88,7 +88,7 @@ class Products
         $limitStr = '';
         $orderStr = '';
 
-        $limit     = $params['limit'] ?? 0;
+        $limit     = $params['limit'] ?? 25;
         $offset    = $params['offset'] ?? 0;
         $sortField = $params['sortField'] ?? '';
         $sortOrder = $params['sortOrder'] ?? '';
