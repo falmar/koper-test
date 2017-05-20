@@ -10,7 +10,7 @@ declare(strict_types = 1);
 namespace KoperTest\Controllers;
 
 
-use KoperTest\Models\Products;
+use KoperTest\Models\ProductsModel;
 use Monolog\Logger;
 use Psr\Container\ContainerInterface;
 use Slim\Http\Request;
@@ -57,7 +57,7 @@ class ProductsController extends BaseController
         }
 
         try {
-            $model   = new Products($this->container);
+            $model   = new ProductsModel($this->container);
             $product = $model->get($productId);
 
             if (!$product) {
@@ -125,7 +125,7 @@ class ProductsController extends BaseController
             $sortField = $request->getParam('sortField', null);
             $sortOrder = $request->getParam('sortOrder', null);
 
-            $model = new Products($this->container);
+            $model = new ProductsModel($this->container);
 
             $results = $model->collection([
                 'limit'     => $limit ? $limit : 25,
@@ -230,7 +230,7 @@ class ProductsController extends BaseController
             $product['created_at'] = $now;
             $product['updated_at'] = $now;
 
-            $model     = new Products($this->container);
+            $model     = new ProductsModel($this->container);
             $productId = $model->add($product);
             $product   = $model->get($productId);
 
@@ -310,7 +310,7 @@ class ProductsController extends BaseController
         }
 
         try {
-            $model           = new Products($this->container);
+            $model           = new ProductsModel($this->container);
             $existentProduct = $model->get($productId);
 
             if (!count($existentProduct)) {
@@ -363,7 +363,7 @@ class ProductsController extends BaseController
         $response = $response->withHeader('Content-Type', 'application/json;charset=utf-8');
 
         try {
-            $model           = new Products($this->container);
+            $model           = new ProductsModel($this->container);
             $existentProduct = $model->get($productId);
 
             if (!count($existentProduct)) {

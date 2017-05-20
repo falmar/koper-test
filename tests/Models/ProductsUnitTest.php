@@ -9,7 +9,7 @@ declare(strict_types = 1);
 
 namespace Tests\Models;
 
-use KoperTest\Models\Products;
+use KoperTest\Models\ProductsModel;
 use Tests\BaseTestCase;
 use Tests\Mocks\Container\Container;
 use Tests\Mocks\PDO\PDO;
@@ -23,7 +23,7 @@ class ProductsUnitTest extends BaseTestCase
     {
         $dbh       = new PDO();
         $container = new Container(['dbh' => $dbh]);
-        $model     = new Products($container);
+        $model     = new ProductsModel($container);
 
         $result0 = $model->get(0);
         $result1 = $model->get(-1);
@@ -42,7 +42,7 @@ class ProductsUnitTest extends BaseTestCase
         ');
         $dbh           = new PDO();
         $container     = new Container(['dbh' => $dbh]);
-        $model         = new Products($container);
+        $model         = new ProductsModel($container);
 
         $model->get(1);
 
@@ -64,7 +64,7 @@ class ProductsUnitTest extends BaseTestCase
             'prepareReturn' => [$stmt]
         ]);
         $container      = new Container(['dbh' => $dbh]);
-        $model          = new Products($container);
+        $model          = new ProductsModel($container);
 
         $model->get(3942);
 
@@ -80,7 +80,7 @@ class ProductsUnitTest extends BaseTestCase
             'prepareReturn' => [$stmt]
         ]);
         $container      = new Container(['dbh' => $dbh]);
-        $model          = new Products($container);
+        $model          = new ProductsModel($container);
 
         $model->get(50);
 
@@ -96,7 +96,7 @@ class ProductsUnitTest extends BaseTestCase
             'prepareReturn' => [$stmt]
         ]);
         $container      = new Container(['dbh' => $dbh]);
-        $model          = new Products($container);
+        $model          = new ProductsModel($container);
 
         $model->get(5);
 
@@ -116,7 +116,7 @@ class ProductsUnitTest extends BaseTestCase
             'prepareReturn' => [$stmt]
         ]);
         $container      = new Container(['dbh' => $dbh]);
-        $model          = new Products($container);
+        $model          = new ProductsModel($container);
 
         $result = $model->get(5);
 
@@ -135,7 +135,7 @@ class ProductsUnitTest extends BaseTestCase
             'prepareReturn' => [$stmt]
         ]);
         $container      = new Container(['dbh' => $dbh]);
-        $model          = new Products($container);
+        $model          = new ProductsModel($container);
 
         $result = $model->get(5);
 
@@ -152,7 +152,7 @@ class ProductsUnitTest extends BaseTestCase
             ]
         ]);
         $container = new Container(['dbh' => $dbh]);
-        $model     = new Products($container);
+        $model     = new ProductsModel($container);
 
         $this->expectException(\PDOException::class);
 
@@ -166,7 +166,7 @@ class ProductsUnitTest extends BaseTestCase
         $expectedQuery = $this->inlineSQLString('SELECT COUNT(*) FROM product;');
         $dbh           = new PDO();
         $container     = new Container(['dbh' => $dbh]);
-        $model         = new Products($container);
+        $model         = new ProductsModel($container);
 
         $model->count();
 
@@ -188,7 +188,7 @@ class ProductsUnitTest extends BaseTestCase
             'prepareReturn' => [$stmt]
         ]);
         $container      = new Container(['dbh' => $dbh]);
-        $model          = new Products($container);
+        $model          = new ProductsModel($container);
 
         $model->count();
 
@@ -204,7 +204,7 @@ class ProductsUnitTest extends BaseTestCase
             'prepareReturn' => [$stmt]
         ]);
         $container      = new Container(['dbh' => $dbh]);
-        $model          = new Products($container);
+        $model          = new ProductsModel($container);
 
         $model->count();
 
@@ -220,7 +220,7 @@ class ProductsUnitTest extends BaseTestCase
             'prepareReturn' => [$stmt]
         ]);
         $container      = new Container(['dbh' => $dbh]);
-        $model          = new Products($container);
+        $model          = new ProductsModel($container);
 
         $model->count();
 
@@ -240,7 +240,7 @@ class ProductsUnitTest extends BaseTestCase
             'prepareReturn' => [$stmt]
         ]);
         $container      = new Container(['dbh' => $dbh]);
-        $model          = new Products($container);
+        $model          = new ProductsModel($container);
 
         $result = $model->count();
 
@@ -259,7 +259,7 @@ class ProductsUnitTest extends BaseTestCase
             'prepareReturn' => [$stmt]
         ]);
         $container      = new Container(['dbh' => $dbh]);
-        $model          = new Products($container);
+        $model          = new ProductsModel($container);
 
         $result = $model->count();
 
@@ -276,7 +276,7 @@ class ProductsUnitTest extends BaseTestCase
             ]
         ]);
         $container = new Container(['dbh' => $dbh]);
-        $model     = new Products($container);
+        $model     = new ProductsModel($container);
 
         $this->expectException(\PDOException::class);
 
@@ -293,7 +293,7 @@ class ProductsUnitTest extends BaseTestCase
         // DI Container
         $container = new Container(['dbh' => $dbh]);
         // class to test
-        $model = new Products($container);
+        $model = new ProductsModel($container);
 
         // test data
         $model->collection();
@@ -319,7 +319,7 @@ class ProductsUnitTest extends BaseTestCase
         $container = new Container(['dbh' => $dbh]);
 
         // class to test
-        $model = new Products($container);
+        $model = new ProductsModel($container);
 
         // test data
         $model->collection(['limit' => 5]);
@@ -344,7 +344,7 @@ class ProductsUnitTest extends BaseTestCase
         // DI Container
         $container = new Container(['dbh' => $dbh]);
         // class to test
-        $model = new Products($container);
+        $model = new ProductsModel($container);
 
         // test data
         $model->collection([
@@ -372,7 +372,7 @@ class ProductsUnitTest extends BaseTestCase
         // DI Container
         $container = new Container(['dbh' => $dbh]);
         // class to test
-        $model = new Products($container);
+        $model = new ProductsModel($container);
 
         // test data
         $model->collection(['offset' => 20]);
@@ -402,7 +402,7 @@ class ProductsUnitTest extends BaseTestCase
         // DI Container
         $container = new Container(['dbh' => $dbh]);
         // class to test
-        $model = new Products($container);
+        $model = new ProductsModel($container);
 
         // test data
         $model->collection([
@@ -444,7 +444,7 @@ class ProductsUnitTest extends BaseTestCase
         $container = new Container(['dbh' => $dbh]);
 
         // class to test
-        $model = new Products($container);
+        $model = new ProductsModel($container);
 
         // test data
         $model->collection(['sortField' => 'name']);
@@ -475,7 +475,7 @@ class ProductsUnitTest extends BaseTestCase
         // DI Container
         $container = new Container(['dbh' => $dbh]);
         // class to test
-        $model = new Products($container);
+        $model = new ProductsModel($container);
 
         $model->collection();
 
@@ -500,7 +500,7 @@ class ProductsUnitTest extends BaseTestCase
         // DI Container
         $container = new Container(['dbh' => $dbh]);
         // class to test
-        $model          = new Products($container);
+        $model          = new ProductsModel($container);
         $expectedResult = [
             ['id' => 1, 'tags' => '[]', 'price' => 0.0],
             ['id' => 2, 'tags' => '[]', 'price' => 0.0]
@@ -531,7 +531,7 @@ class ProductsUnitTest extends BaseTestCase
         // DI Container
         $container = new Container(['dbh' => $dbh]);
         // class to test
-        $model = new Products($container);
+        $model = new ProductsModel($container);
 
         $expectedResult = [
             ['id' => 1, 'name' => 'MX-4 Thermal Compound', 'tags' => '["Thermal", "Computers"]', 'price' => 0.0],
@@ -556,7 +556,7 @@ class ProductsUnitTest extends BaseTestCase
         // DI Container
         $container = new Container(['dbh' => $dbh]);
         // class to test
-        $model = new Products($container);
+        $model = new ProductsModel($container);
 
         $this->expectException(\PDOException::class);
 
@@ -579,7 +579,7 @@ class ProductsUnitTest extends BaseTestCase
         // DI Container
         $container = new Container(['dbh' => $dbh]);
         // model
-        $model = new Products($container);
+        $model = new ProductsModel($container);
 
         $model->add([
             'name'       => '',
@@ -608,7 +608,7 @@ class ProductsUnitTest extends BaseTestCase
             'prepareReturn' => [$stmt]
         ]);
         $container      = new Container(['dbh' => $dbh]);
-        $model          = new Products($container);
+        $model          = new ProductsModel($container);
 
         $model->add([
             'name'       => '',
@@ -641,7 +641,7 @@ class ProductsUnitTest extends BaseTestCase
         // DI Container
         $container = new Container(['dbh' => $dbh]);
         // model
-        $model = new Products($container);
+        $model = new ProductsModel($container);
 
         $model->add([
             'name'       => 'MX-4 Thermal Compound',
@@ -666,7 +666,7 @@ class ProductsUnitTest extends BaseTestCase
             'prepareReturn' => [$stmt]
         ]);
         $container = new Container(['dbh' => $dbh]);
-        $model     = new Products($container);
+        $model     = new ProductsModel($container);
 
         $result = $model->add([
             'name'       => '',
@@ -686,7 +686,7 @@ class ProductsUnitTest extends BaseTestCase
             'prepareReturn' => [$stmt]
         ]);
         $container = new Container(['dbh' => $dbh]);
-        $model     = new Products($container);
+        $model     = new ProductsModel($container);
 
         $model->add([
             'name'       => '',
@@ -707,7 +707,7 @@ class ProductsUnitTest extends BaseTestCase
             'prepareReturn' => [$stmt]
         ]);
         $container = new Container(['dbh' => $dbh]);
-        $model     = new Products($container);
+        $model     = new ProductsModel($container);
 
         $model->add([
             'name'       => '',
@@ -731,7 +731,7 @@ class ProductsUnitTest extends BaseTestCase
             ]
         ]);
         $container = new Container(['dbh' => $dbh]);
-        $model     = new Products($container);
+        $model     = new ProductsModel($container);
 
         $this->expectException(\PDOException::class);
 
@@ -743,7 +743,7 @@ class ProductsUnitTest extends BaseTestCase
     public function testUpdateEarlyReturnOnBadIdParam()
     {
         $container = new Container([]);
-        $model     = new Products($container);
+        $model     = new ProductsModel($container);
 
         $result = $model->update(0, [
             'name' => ''
@@ -755,7 +755,7 @@ class ProductsUnitTest extends BaseTestCase
     public function testUpdateEarlyReturnOnBadDataParam()
     {
         $container = new Container([]);
-        $model     = new Products($container);
+        $model     = new ProductsModel($container);
 
         $result = $model->update(1, []);
 
@@ -775,7 +775,7 @@ class ProductsUnitTest extends BaseTestCase
         ];
         $dbh            = new PDO();
         $container      = new Container(['dbh' => $dbh]);
-        $model          = new Products($container);
+        $model          = new ProductsModel($container);
 
         $model->update(1, [
             'name'       => '',
@@ -808,7 +808,7 @@ class ProductsUnitTest extends BaseTestCase
             'prepareReturn' => [$stmt]
         ]);
         $container      = new Container(['dbh' => $dbh]);
-        $model          = new Products($container);
+        $model          = new ProductsModel($container);
 
         $model->update(18, [
             'name'       => 'Acer Aspire VX15 ',
@@ -829,7 +829,7 @@ class ProductsUnitTest extends BaseTestCase
             'prepareReturn' => [$stmt]
         ]);
         $container      = new Container(['dbh' => $dbh]);
-        $model          = new Products($container);
+        $model          = new ProductsModel($container);
 
         $model->update(1, [
             'name'       => '',
@@ -853,7 +853,7 @@ class ProductsUnitTest extends BaseTestCase
             'prepareReturn' => [$stmt]
         ]);
         $container = new Container(['dbh' => $dbh]);
-        $model     = new Products($container);
+        $model     = new ProductsModel($container);
 
         $result = $model->update(1, [
             'name'       => '',
@@ -876,7 +876,7 @@ class ProductsUnitTest extends BaseTestCase
             'prepareReturn' => [$stmt]
         ]);
         $container = new Container(['dbh' => $dbh]);
-        $model     = new Products($container);
+        $model     = new ProductsModel($container);
 
         $result = $model->update(1, [
             'name'       => '',
@@ -898,7 +898,7 @@ class ProductsUnitTest extends BaseTestCase
             ]
         ]);
         $container = new Container(['dbh' => $dbh]);
-        $model     = new Products($container);
+        $model     = new ProductsModel($container);
 
         $this->expectException(\PDOException::class);
 
@@ -910,7 +910,7 @@ class ProductsUnitTest extends BaseTestCase
     public function testDeleteWithWrongIdParam()
     {
         $container = new Container([]);
-        $model     = new Products($container);
+        $model     = new ProductsModel($container);
 
         $result1 = $model->delete(0);
         $result2 = $model->delete(-32);
@@ -924,7 +924,7 @@ class ProductsUnitTest extends BaseTestCase
         $expectedQuery = $this->inlineSQLString('DELETE FROM product WHERE id = ?;');
         $dbh           = new PDO();
         $container     = new Container(['dbh' => $dbh]);
-        $model         = new Products($container);
+        $model         = new ProductsModel($container);
 
         $model->delete(1);
 
@@ -946,7 +946,7 @@ class ProductsUnitTest extends BaseTestCase
             'prepareReturn' => [$stmt]
         ]);
         $container      = new Container(['dbh' => $dbh]);
-        $model          = new Products($container);
+        $model          = new ProductsModel($container);
 
         $model->delete(1);
 
@@ -962,7 +962,7 @@ class ProductsUnitTest extends BaseTestCase
             'prepareReturn' => [$stmt]
         ]);
         $container      = new Container(['dbh' => $dbh]);
-        $model          = new Products($container);
+        $model          = new ProductsModel($container);
 
         $model->delete(1);
 
@@ -977,7 +977,7 @@ class ProductsUnitTest extends BaseTestCase
             'prepareReturn' => [$stmt]
         ]);
         $container = new Container(['dbh' => $dbh]);
-        $model     = new Products($container);
+        $model     = new ProductsModel($container);
 
         $model->delete(1);
 
@@ -994,7 +994,7 @@ class ProductsUnitTest extends BaseTestCase
             'prepareReturn' => [$stmt]
         ]);
         $container = new Container(['dbh' => $dbh]);
-        $model     = new Products($container);
+        $model     = new ProductsModel($container);
 
         $result = $model->delete(1);
 
@@ -1010,7 +1010,7 @@ class ProductsUnitTest extends BaseTestCase
             'prepareReturn' => [$stmt]
         ]);
         $container = new Container(['dbh' => $dbh]);
-        $model     = new Products($container);
+        $model     = new ProductsModel($container);
 
         $result = $model->delete(1);
 
@@ -1027,7 +1027,7 @@ class ProductsUnitTest extends BaseTestCase
             ]
         ]);
         $container = new Container(['dbh' => $dbh]);
-        $model     = new Products($container);
+        $model     = new ProductsModel($container);
 
         $this->expectException(\PDOException::class);
 

@@ -11,7 +11,7 @@ namespace KoperTest\Models;
 
 use Psr\Container\ContainerInterface;
 
-class Products
+class ProductsModel
 {
     /** @var null|ContainerInterface $container */
     protected $container = null;

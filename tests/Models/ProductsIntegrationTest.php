@@ -11,7 +11,7 @@ namespace Tests\Models;
 
 
 use KoperTest\db\Product;
-use KoperTest\Models\Products;
+use KoperTest\Models\ProductsModel;
 use Tests\BaseTestCase;
 use Tests\Mocks\Container\Container;
 
@@ -44,7 +44,7 @@ class ProductsIntegrationTest extends BaseTestCase
     {
         $expectedResult = 2;
         $container      = new Container(['dbh' => self::$dbh]);
-        $model          = new Products($container);
+        $model          = new ProductsModel($container);
 
         $result = $model->count();
 
@@ -57,7 +57,7 @@ class ProductsIntegrationTest extends BaseTestCase
 
         $expectedResult = 0;
         $container      = new Container(['dbh' => self::$dbh]);
-        $model          = new Products($container);
+        $model          = new ProductsModel($container);
 
         $result = $model->count();
 
@@ -75,7 +75,7 @@ class ProductsIntegrationTest extends BaseTestCase
             'updated_at' => '2017-05-15 14:00:00+00'
         ];
         $container      = new Container(['dbh' => self::$dbh]);
-        $model          = new Products($container);
+        $model          = new ProductsModel($container);
 
         $result = $model->get(1);
 
@@ -86,7 +86,7 @@ class ProductsIntegrationTest extends BaseTestCase
     {
         $expectedResult = [];
         $container      = new Container(['dbh' => self::$dbh]);
-        $model          = new Products($container);
+        $model          = new ProductsModel($container);
 
         $result = $model->get(5);
 
@@ -115,7 +115,7 @@ class ProductsIntegrationTest extends BaseTestCase
         ];
 
         $container = new Container(['dbh' => self::$dbh]);
-        $model     = new Products($container);
+        $model     = new ProductsModel($container);
 
         $result = $model->collection();
 
@@ -136,7 +136,7 @@ class ProductsIntegrationTest extends BaseTestCase
         ];
 
         $container = new Container(['dbh' => self::$dbh]);
-        $model     = new Products($container);
+        $model     = new ProductsModel($container);
 
         $result = $model->collection([
             'limit' => 1
@@ -159,7 +159,7 @@ class ProductsIntegrationTest extends BaseTestCase
         ];
 
         $container = new Container(['dbh' => self::$dbh]);
-        $model     = new Products($container);
+        $model     = new ProductsModel($container);
 
         $result = $model->collection([
             'limit'  => 1,
@@ -191,7 +191,7 @@ class ProductsIntegrationTest extends BaseTestCase
         ];
 
         $container = new Container(['dbh' => self::$dbh]);
-        $model     = new Products($container);
+        $model     = new ProductsModel($container);
 
         $result = $model->collection([
             'sortField' => 'updated_at',
@@ -205,7 +205,7 @@ class ProductsIntegrationTest extends BaseTestCase
     {
         $expectedResult = 3;
         $container      = new Container(['dbh' => self::$dbh]);
-        $model          = new Products($container);
+        $model          = new ProductsModel($container);
 
         $result = $model->add([
             'name'       => 'Marvo CoolingPad',
@@ -230,7 +230,7 @@ class ProductsIntegrationTest extends BaseTestCase
             'updated_at' => '2017-05-16 14:00:00+00'
         ];
         $container      = new Container(['dbh' => self::$dbh]);
-        $model          = new Products($container);
+        $model          = new ProductsModel($container);
 
         $result = $model->update(1, [
             'name'       => 'Marvo CoolingPad',
@@ -254,7 +254,7 @@ class ProductsIntegrationTest extends BaseTestCase
     {
         $expectedResult = false;
         $container      = new Container(['dbh' => self::$dbh]);
-        $model          = new Products($container);
+        $model          = new ProductsModel($container);
 
         $result = $model->update(5, [
             'name'       => 'Marvo CoolingPad',
@@ -271,7 +271,7 @@ class ProductsIntegrationTest extends BaseTestCase
         $expectedResult = true;
         $expectedCount  = 1;
         $container      = new Container(['dbh' => self::$dbh]);
-        $model          = new Products($container);
+        $model          = new ProductsModel($container);
 
         $result = $model->delete(1);
 
@@ -290,7 +290,7 @@ class ProductsIntegrationTest extends BaseTestCase
     {
         $expectedResult = false;
         $container      = new Container(['dbh' => self::$dbh]);
-        $model          = new Products($container);
+        $model          = new ProductsModel($container);
 
         $result = $model->delete(5);
 
