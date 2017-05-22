@@ -29,7 +29,31 @@ class InvoicesModel
      */
     public function get(int $id): array
     {
-        return [];
+        if ($id <= 0) {
+            return [];
+        }
+
+        /** @var \PDO $dbh */
+        $dbh = $this->container->get('dbh');
+
+        $stmt = $dbh->prepare(
+            'SELECT id, code, status, customer, discount, tax, total , created_at, updated_at FROM invoice WHERE id = ?;'
+        );
+
+        $stmt->bindValue(1, $id, \PDO::PARAM_INT);
+        $stmt->execute();
+
+        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+        if (!$result) {
+            return [];
+        }
+
+        $result['discount'] = (float)($result['discount'] ?? 0);
+        $result['tax']      = (float)($result['tax'] ?? 0);
+        $result['total']    = (float)($result['total'] ?? 0);
+
+        return $result;
     }
 
     /**
@@ -40,7 +64,17 @@ class InvoicesModel
      */
     public function count(): int
     {
-        return 0;
+        $count = 0;
+        /** @var \PDO $dbh */
+        $dbh = $this->container->get('dbh');
+
+        $stmt = $dbh->prepare('SELECT COUNT(*) FROM invoice;');
+
+        $stmt->bindColumn(1, $count, \PDO::PARAM_INT);
+        $stmt->execute();
+        $stmt->fetch();
+
+        return $count;
     }
 
     /**
@@ -52,7 +86,50 @@ class InvoicesModel
      */
     public function collection(array $params = []): array
     {
-        return [];
+        /** @var \PDO $dbh */
+        $dbh      = $this->container->get('dbh');
+        $results  = [];
+        $limitStr = '';
+        $orderStr = '';
+
+        $limit     = $params['limit'] ?? 25;
+        $offset    = $params['offset'] ?? 0;
+        $sortField = $params['sortField'] ?? '';
+        $sortOrder = $params['sortOrder'] ?? '';
+
+        if ($limit && $offset) {
+            $limitStr = " LIMIT {$limit} OFFSET {$offset}";
+        } elseif ($limit) {
+            $limitStr = " LIMIT {$limit}";
+        }
+
+        if ($sortField && $sortOrder) {
+            $orderStr = " ORDER BY {$sortField} {$sortOrder}";
+        }
+
+        $ssql = "
+          SELECT 
+              id, code, status, customer, discount, tax, total , created_at, updated_at 
+          FROM invoice
+          {$orderStr}
+          {$limitStr}
+        ;";
+
+        /** @var \PDOStatement $stmt */
+        $stmt = $dbh->prepare($ssql);
+
+        $stmt->execute();
+
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            // perform any formatter if required
+            $row['discount'] = (float)($row['discount'] ?? 0);
+            $row['tax']      = (float)($row['tax'] ?? 0);
+            $row['total']    = (float)($row['total'] ?? 0);
+
+            $results[] = $row;
+        }
+
+        return $results;
     }
 
     /**
@@ -63,7 +140,32 @@ class InvoicesModel
      */
     public function add(array $data): int
     {
-        return 0;
+        /** @var \PDO $dbh */
+        $dbh  = $this->container->get('dbh');
+        $ssql = '
+            INSERT INTO invoice
+            (code, status, customer, discount, tax, total , created_at, updated_at)
+            VALUES 
+            (?, ?, ?, ?, ?, ?, ?, ?)
+            RETURNING id;
+        ';
+        $stmt = $dbh->prepare($ssql);
+
+        $stmt->bindColumn('id', $id, \PDO::PARAM_INT);
+
+        $stmt->bindValue(1, $data['code'], \PDO::PARAM_STR);
+        $stmt->bindValue(2, $data['status'], \PDO::PARAM_STR);
+        $stmt->bindValue(3, $data['customer'], \PDO::PARAM_STR);
+        $stmt->bindValue(4, $data['discount'], \PDO::PARAM_STR);
+        $stmt->bindValue(5, $data['tax'], \PDO::PARAM_STR);
+        $stmt->bindValue(6, $data['total'], \PDO::PARAM_STR);
+        $stmt->bindValue(7, $data['created_at'], \PDO::PARAM_STR);
+        $stmt->bindValue(8, $data['updated_at'], \PDO::PARAM_STR);
+
+        $stmt->execute();
+        $stmt->fetch();
+
+        return $id ?? 0;
     }
 
     /**
@@ -74,7 +176,32 @@ class InvoicesModel
      */
     public function update(int $id, array $data): bool
     {
-        return false;
+        if ($id <= 0 || !count($data)) {
+            return false;
+        }
+
+        /** @var \PDO $dbh */
+        $dbh = $this->container->get('dbh');
+
+        $ssql = "
+            UPDATE invoice 
+            SET code = ?, status = ?, customer = ?, discount = ?, tax = ?, total = ?, updated_at = ?
+            WHERE id = ?;                    
+        ";
+
+        $stmt = $dbh->prepare($ssql);
+
+        $stmt->bindValue(1, $data['code'], \PDO::PARAM_STR);
+        $stmt->bindValue(2, $data['status'], \PDO::PARAM_STR);
+        $stmt->bindValue(3, $data['customer'], \PDO::PARAM_STR);
+        $stmt->bindValue(4, $data['discount'], \PDO::PARAM_STR);
+        $stmt->bindValue(5, $data['tax'], \PDO::PARAM_STR);
+        $stmt->bindValue(6, $data['total'], \PDO::PARAM_STR);
+        $stmt->bindValue(7, $data['updated_at'], \PDO::PARAM_STR);
+        $stmt->bindValue(8, $id, \PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->rowCount() > 0;
     }
 
     /**
@@ -84,6 +211,18 @@ class InvoicesModel
      */
     public function delete(int $id): bool
     {
-        return false;
+        if ($id <= 0) {
+            return false;
+        }
+
+        /** @var \PDO $dbh */
+        $dbh  = $this->container->get('dbh');
+        $ssql = 'DELETE FROM invoice WHERE id = ?;';
+        $stmt = $dbh->prepare($ssql);
+
+        $stmt->bindValue(1, $id, \PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->rowCount() > 0;
     }
 }
