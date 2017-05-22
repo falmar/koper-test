@@ -120,19 +120,36 @@ class ProductsController extends BaseController
         }
 
         try {
-            $limit     = (int)$request->getParam('limit', null);
-            $offset    = (int)$request->getParam('offset', null);
-            $sortField = $request->getParam('sortField', null);
-            $sortOrder = $request->getParam('sortOrder', null);
+            $limit     = $request->getParam('limit', 0);
+            $offset    = $request->getParam('offset', 0);
+            $sortField = $request->getParam('sortField', '');
+            $sortOrder = strtoupper($request->getParam('sortOrder', ''));
+
+            // sanitize input
+            $allowedSortField = ['id', 'name', 'price', 'created_at', 'updated_at'];
+            $limit            = (int)preg_replace('/[^0-9]/', '', $limit);
+            $offset           = (int)preg_replace('/[^0-9]/', '', $offset);
+
+            if (!in_array($sortField, $allowedSortField)) {
+                $sortField = '';
+            }
+
+            if ($sortOrder !== 'DESC' && $sortOrder !== 'ASC') {
+                $sortOrder = '';
+            }
 
             $model = new ProductsModel($this->container);
 
-            $results = $model->collection([
-                'limit'     => $limit ? $limit : 25,
+            $params = [
+                'limit'     => $limit > 0 ? $limit : 25,
                 'offset'    => $offset,
                 'sortField' => $sortField,
                 'sortOrder' => $sortOrder,
-            ]);
+            ];
+
+            $logger->info('params', $params);
+
+            $results = $model->collection($params);
 
             foreach ($results as $k => $result) {
                 $result[$k]['tags'] = json_decode($result['tags']);
