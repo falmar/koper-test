@@ -694,4 +694,43 @@ class ProductsTest extends BaseTestCase
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals($expectedBody, json_decode($body, true));
     }
+
+    public function testCollectionBodySanitizedInput()
+    {
+        $expectedBody = [
+            'metadata' => [
+                'resultset' => [
+                    'count'  => 2,
+                    'limit'  => 25,
+                    'offset' => 0
+                ]
+            ],
+            'results'  => [
+                [
+                    'id'         => 1,
+                    'name'       => 'MX-4 Thermal Compound',
+                    'tags'       => '["Computers", "CPU", "Heat"]',
+                    'price'      => 6.59,
+                    'created_at' => '2017-05-15 14:00:00+00',
+                    'updated_at' => '2017-05-15 14:00:00+00'
+                ],
+                [
+                    'id'         => 2,
+                    'name'       => 'Acer Aspire VX15',
+                    'tags'       => '["Computers"]',
+                    'price'      => 1049.99,
+                    'created_at' => '2017-05-15 15:00:00+00',
+                    'updated_at' => '2017-05-15 15:00:00+00'
+                ]
+            ]
+        ];
+        $request      = $this->createRequest('GET', '/products?sortField=weirdStuff&sortOrder=sheeep&limit=limitless');
+        $request      = $request->withHeader('Accept', 'application/json');
+        $response     = $this->runApp($request);
+
+        $body = (string)$response->getBody();
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals($expectedBody, json_decode($body, true));
+    }
 }
