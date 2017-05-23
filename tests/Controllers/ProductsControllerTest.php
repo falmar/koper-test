@@ -11,10 +11,11 @@ namespace Tests\Controllers;
 
 
 use KoperTest\Migrations\Product;
+use Slim\Http\Request;
 use Tests\BaseTestCase;
 
 
-class ProductsTest extends BaseTestCase
+class ProductsControllerTest extends BaseTestCase
 {
     /** @var \PDO */
     protected static $dbh = null;
@@ -233,6 +234,7 @@ class ProductsTest extends BaseTestCase
 
     public function testAddError500()
     {
+        /** @var Request $request */
         self::$dbh->exec('DROP TABLE product');
 
         $body     = [
@@ -685,7 +687,7 @@ class ProductsTest extends BaseTestCase
                 ]
             ]
         ];
-        $request      = $this->createRequest('GET', '/products?limit=1&offset=1&sortField=updated_at&sortOrder=desc');
+        $request      = $this->createRequest('GET', '/products?limit=1&offset=1&sort=updated_at,desc');
         $request      = $request->withHeader('Accept', 'application/json');
         $response     = $this->runApp($request);
 
@@ -724,7 +726,7 @@ class ProductsTest extends BaseTestCase
                 ]
             ]
         ];
-        $request      = $this->createRequest('GET', '/products?sortField=weirdStuff&sortOrder=sheeep&limit=limitless');
+        $request      = $this->createRequest('GET', '/products?sort=weirdStuff,sheeep&limit=limitless');
         $request      = $request->withHeader('Accept', 'application/json');
         $response     = $this->runApp($request);
 
