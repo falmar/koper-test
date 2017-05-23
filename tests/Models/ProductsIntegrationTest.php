@@ -37,7 +37,7 @@ class ProductsIntegrationTest extends BaseTestCase
 
     public function tearDown()
     {
-        // self::$migration->down();
+        self::$migration->down();
     }
 
     public function testCount()
