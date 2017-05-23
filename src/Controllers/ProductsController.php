@@ -388,7 +388,7 @@ class ProductsController extends BaseController
             if (!count($existentProduct)) {
                 return $response->withStatus(500)->withJson([
                     'status'           => 500,
-                    'developerMessage' => "Product ({$productId}) does not exist. Due to database capabilities new row can't be added.",
+                    'developerMessage' => "Product ({$productId}) does not exist.",
                     'userMessage'      => 'Unexpected error has occurred, try again later.',
                     'errorCode'        => '',
                     'moreInfo'         => ''
