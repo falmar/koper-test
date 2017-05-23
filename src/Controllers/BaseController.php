@@ -25,4 +25,21 @@ class BaseController
     {
         return strlen($header) > 0 && strpos('application/json', $header) !== false;
     }
+
+    protected function parseOrder(string $sort): array
+    {
+        if (!$sort) {
+            return [
+                'sortField' => '',
+                'sortOrder' => ''
+            ];
+        }
+
+        list($sortField, $sortOrder) = explode(',', $sort);
+
+        return [
+            'sortField' => $sortField ?? '',
+            'sortOrder' => $sortOrder ?? ''
+        ];
+    }
 }

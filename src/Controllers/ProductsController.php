@@ -120,15 +120,17 @@ class ProductsController extends BaseController
         }
 
         try {
-            $limit     = $request->getParam('limit', 0);
-            $offset    = $request->getParam('offset', 0);
-            $sortField = $request->getParam('sortField', '');
-            $sortOrder = strtoupper($request->getParam('sortOrder', ''));
+            $limit  = $request->getParam('limit', 0);
+            $offset = $request->getParam('offset', 0);
+            $sort   = $request->getParam('sort', '');
 
             // sanitize input
             $allowedSortField = ['id', 'name', 'price', 'created_at', 'updated_at'];
             $limit            = (int)preg_replace('/[^0-9]/', '', $limit);
             $offset           = (int)preg_replace('/[^0-9]/', '', $offset);
+            $parsedSort       = $this->parseOrder($sort);
+            $sortField        = $parsedSort['sortField'];
+            $sortOrder        = strtoupper($parsedSort['sortOrder']);
 
             if (!in_array($sortField, $allowedSortField)) {
                 $sortField = '';
