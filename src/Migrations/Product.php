@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
 /**
  * Created by PhpStorm.
  * User: falmar
@@ -7,7 +7,7 @@ declare(strict_types=1);
  * Time: 2:06 PM
  */
 
-namespace KoperTest\db;
+namespace KoperTest\Migrations;
 
 
 class Product implements MigrationInterface
@@ -56,18 +56,18 @@ class Product implements MigrationInterface
     {
         $products = [
             [
-                'MX-4 Thermal Compound',
-                '["Computers", "CPU", "Heat"]',
-                6.59,
-                '2017-05-15T14:00:00Z',
-                '2017-05-15T14:00:00Z'
+                'name'       => 'MX-4 Thermal Compound',
+                'tags'       => '["Computers", "CPU", "Heat"]',
+                'price'      => 6.59,
+                'created_at' => '2017-05-15T14:00:00Z',
+                'updated_at' => '2017-05-15T14:00:00Z'
             ],
             [
-                'Acer Aspire VX15',
-                '["Computers"]',
-                1049.99,
-                '2017-05-15T15:00:00Z',
-                '2017-05-15T15:00:00Z'
+                'name'       => 'Acer Aspire VX15',
+                'tags'       => '["Computers"]',
+                'price'      => 1049.99,
+                'created_at' => '2017-05-15T15:00:00Z',
+                'updated_at' => '2017-05-15T15:00:00Z'
             ]
         ];
 
@@ -79,7 +79,7 @@ class Product implements MigrationInterface
         );
 
         foreach ($products as $product) {
-            $stmt->execute($product);
+            $stmt->execute(array_values($product));
         }
     }
 }

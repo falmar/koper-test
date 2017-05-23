@@ -6,7 +6,7 @@
  * Time: 2:00 PM
  */
 
-namespace KoperTest\db;
+namespace KoperTest\Migrations;
 
 
 interface MigrationInterface

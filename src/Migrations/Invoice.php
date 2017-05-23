@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
 /**
  * Created by PhpStorm.
  * User: falmar
@@ -7,7 +7,7 @@ declare(strict_types=1);
  * Time: 2:06 PM
  */
 
-namespace KoperTest\db;
+namespace KoperTest\Migrations;
 
 
 class Invoice implements MigrationInterface
@@ -87,7 +87,7 @@ class Invoice implements MigrationInterface
         );
 
         foreach ($products as $product) {
-            $stmt->execute($product);
+            $stmt->execute(array_values($product));
         }
     }
 }

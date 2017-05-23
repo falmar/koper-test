@@ -10,7 +10,7 @@ declare(strict_types = 1);
 namespace Tests\Controllers;
 
 
-use KoperTest\db\Product;
+use KoperTest\Migrations\Product;
 use Tests\BaseTestCase;
 
 
