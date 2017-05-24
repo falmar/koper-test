@@ -38,3 +38,12 @@ $app->get('/invoices/{id}', \KoperTest\Controllers\InvoicesController::class . '
 $app->post('/invoices', \KoperTest\Controllers\InvoicesController::class . ':add');
 $app->put('/invoices/{id}', \KoperTest\Controllers\InvoicesController::class . ':update');
 $app->delete('/invoices/{id}', \KoperTest\Controllers\InvoicesController::class . ':delete');
+
+// Invoice
+$app->get('/invoices/{invoiceId}/products', \KoperTest\Controllers\InvoiceProductsController::class . ':collection');
+$app->get('/invoices/{invoiceId}/products/{productId}', \KoperTest\Controllers\InvoiceProductsController::class . ':get');
+$app->post('/invoices/{invoiceId}/products', \KoperTest\Controllers\InvoiceProductsController::class . ':add');
+$app->put('/invoices/{invoiceId}/products/{productId}', \KoperTest\Controllers\InvoiceProductsController::class . ':update');
+$app->delete(
+    '/invoices/{invoiceId}/products/{productId}', \KoperTest\Controllers\InvoiceProductsController::class . ':delete'
+);

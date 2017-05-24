@@ -24,9 +24,9 @@ class InvoiceProductsIntegrationTest extends BaseTestCase
     protected static $dbh = null;
     /** @var InvoiceProduct */
     protected static $migration = null;
-    /** @var InvoiceProduct */
+    /** @var Product */
     protected static $migrationProduct = null;
-    /** @var InvoiceProduct */
+    /** @var Invoice */
     protected static $migrationInvoice = null;
 
     public static function setUpBeforeClass()
