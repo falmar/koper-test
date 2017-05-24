@@ -299,7 +299,7 @@ class InvoicesUnitTest extends BaseTestCase
 
         $this->expectException(\PDOException::class);
 
-        $model->get(1);
+        $model->count();
     }
 
     // get collection

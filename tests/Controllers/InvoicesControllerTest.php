@@ -690,7 +690,7 @@ class InvoicesControllerTest extends BaseTestCase
                 [
                     'id'         => 2,
                     'code'       => 'IV002',
-                    'status'     => 'PAID',
+                    'status'     => 'PENDING',
                     'customer'   => 'David',
                     'discount'   => 0,
                     'tax'        => 0,
@@ -769,7 +769,7 @@ class InvoicesControllerTest extends BaseTestCase
                 [
                     'id'         => 2,
                     'code'       => 'IV002',
-                    'status'     => 'PAID',
+                    'status'     => 'PENDING',
                     'customer'   => 'David',
                     'discount'   => 0,
                     'tax'        => 0,

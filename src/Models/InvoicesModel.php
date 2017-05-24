@@ -60,9 +60,10 @@ class InvoicesModel
      * Return the total amount of invoices
      * TODO: filtering
      *
+     * @param array $params
      * @return int
      */
-    public function count(): int
+    public function count(array $params = []): int
     {
         $count = 0;
         /** @var \PDO $dbh */
