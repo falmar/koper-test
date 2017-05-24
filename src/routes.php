@@ -4,16 +4,22 @@
 // Migrate database when running dev mode
 if (getenv('SLIM_ENV') === 'development') {
     $app->get('/migrate', function (\Slim\Http\Request $request, \Slim\Http\Response $response) {
-        $product = new \KoperTest\Migrations\Product($this->get('dbh'));
-        $invoice = new \KoperTest\Migrations\Product($this->get('dbh'));
+        $product         = new \KoperTest\Migrations\Product($this->get('dbh'));
+        $invoice         = new \KoperTest\Migrations\Invoice($this->get('dbh'));
+        $invoiceProducts = new \KoperTest\Migrations\InvoiceProduct($this->get('dbh'));
 
+        $invoiceProducts->down();
         $product->down();
+        $invoice->down();
+
         $product->up();
         $product->seed();
 
-        $invoice->down();
         $invoice->up();
         $invoice->seed();
+
+        $invoiceProducts->up();
+        $invoiceProducts->seed();
 
         return $response->withStatus(200);
     });

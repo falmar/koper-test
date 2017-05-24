@@ -69,14 +69,14 @@ class Invoice implements MigrationInterface
             ],
             [
                 'code'       => 'IV002',
-                'status'     => 'PAID',
+                'status'     => 'PENDING',
                 'customer'   => 'David',
                 'discount'   => 0,
                 'tax'        => 0,
                 'total'      => 36.67,
                 'created_at' => '2017-05-14 17:00:00+00',
                 'updated_at' => '2017-05-14 17:00:00+00',
-            ],
+            ]
         ];
 
         $stmt = $this->dbh->prepare(
