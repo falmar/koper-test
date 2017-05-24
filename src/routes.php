@@ -25,6 +25,22 @@ if (getenv('SLIM_ENV') === 'development') {
     });
 }
 
+// CORS - apparently not needed, will use same path
+$app->options('*', function (\Slim\Http\Request $request, \Slim\Http\Response $response) {
+    $origin  = $request->getHeaderLine('Origin');
+    $methods = $request->getHeaderLine("Access-Control-Request-Method");
+
+    $this->logger->info('origin', $origin);
+    $this->logger->info('methods', $methods);
+
+    $response = $response->withStatus(200)
+        ->withHeader("Access-Control-Allow-Origin", $origin)
+        ->withAddedHeader("Access-Control-Allow-Headers", "Content-Type, Origin, Authorization")
+        ->withAddedHeader("Access-Control-Allow-Methods", $methods);
+
+    return $response;
+});
+
 // Products
 $app->get('/products', \KoperTest\Controllers\ProductsController::class . ':collection');
 $app->get('/products/{id}', \KoperTest\Controllers\ProductsController::class . ':get');
@@ -40,10 +56,15 @@ $app->put('/invoices/{id}', \KoperTest\Controllers\InvoicesController::class . '
 $app->delete('/invoices/{id}', \KoperTest\Controllers\InvoicesController::class . ':delete');
 
 // Invoice
-$app->get('/invoices/{invoiceId}/products', \KoperTest\Controllers\InvoiceProductsController::class . ':collection');
-$app->get('/invoices/{invoiceId}/products/{productId}', \KoperTest\Controllers\InvoiceProductsController::class . ':get');
+$app->get('/invoices/{invoiceId}/products',
+    \KoperTest\Controllers\InvoiceProductsController::class . ':collection');
+$app->get('/invoices/{invoiceId}/products/{productId}',
+    \KoperTest\Controllers\InvoiceProductsController::class . ':get');
 $app->post('/invoices/{invoiceId}/products', \KoperTest\Controllers\InvoiceProductsController::class . ':add');
-$app->put('/invoices/{invoiceId}/products/{productId}', \KoperTest\Controllers\InvoiceProductsController::class . ':update');
+$app->put('/invoices/{invoiceId}/products/{productId}',
+    \KoperTest\Controllers\InvoiceProductsController::class . ':update');
 $app->delete(
-    '/invoices/{invoiceId}/products/{productId}', \KoperTest\Controllers\InvoiceProductsController::class . ':delete'
+    '/invoices/{invoiceId}/products/{productId}',
+    \KoperTest\Controllers\InvoiceProductsController::class . ':delete'
 );
+

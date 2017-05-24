@@ -1,0 +1,843 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is a sample server KoperTest.",
+    "version": "1.0",
+    "title": "Koper Test",
+    "contact": {
+      "email": "daviddlavier@gmail.com"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "host": "localhost:8080",
+  "basePath": "/v1",
+  "tags": [
+    {
+      "name": "Products"
+    },
+    {
+      "name": "Invoices"
+    },
+    {
+      "name": "InvoiceProduct",
+      "description": "Relation between products and invoices"
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/products": {
+      "get": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "Retrieve Products",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Amount of items to retrieve",
+            "type": "integer",
+            "default": 25
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Amount of items to skip",
+            "type": "integer",
+            "default": 0
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Field and order to sort field",
+            "type": "string",
+            "default": "price,desc"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Created",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Product"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "Add a new Product to the collection",
+        "description": "",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Pet object that needs to be added to the store",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Product"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/Product"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/products/{id}": {
+      "get": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "Get a single Product",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "description": "Product ID",
+            "default": 1,
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Product"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "Get a single Product",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "description": "Product ID",
+            "default": 1,
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Product"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "Remove product from collection",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "description": "Product ID",
+            "default": 1,
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK - Updated resource"
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/invoices": {
+      "get": {
+        "tags": [
+          "Invoices"
+        ],
+        "summary": "Retrieve Invoices",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Amount of items to retrieve",
+            "type": "integer",
+            "default": 25
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Amount of items to skip",
+            "type": "integer",
+            "default": 0
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Field and order to sort field",
+            "type": "string",
+            "default": "price,desc"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Created",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Invoice"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Invoices"
+        ],
+        "summary": "Add a new Invoice to the collection",
+        "description": "",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Invoice that needs to be added",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Invoice"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/Invoice"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/invoices/{invoiceId}": {
+      "get": {
+        "tags": [
+          "Invoices"
+        ],
+        "summary": "Get a single Invoice",
+        "parameters": [
+          {
+            "name": "invoiceId",
+            "in": "path",
+            "type": "string",
+            "description": "Product ID",
+            "default": 1,
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Invoice"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Invoices"
+        ],
+        "summary": "Update a single Invoice",
+        "parameters": [
+          {
+            "name": "invoiceId",
+            "in": "path",
+            "type": "string",
+            "description": "Product ID",
+            "default": 1,
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Invoice that needs to be updated",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Invoice"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK - Updated resource",
+            "schema": {
+              "$ref": "#/definitions/Invoice"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Invoices"
+        ],
+        "summary": "Remove Invoice from collection",
+        "parameters": [
+          {
+            "name": "invoiceId",
+            "in": "path",
+            "type": "string",
+            "description": "Product ID",
+            "default": 1,
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/invoices/{invoiceId}/products": {
+      "get": {
+        "tags": [
+          "InvoiceProduct"
+        ],
+        "summary": "Retrieve InvoiceProducts",
+        "parameters": [
+          {
+            "name": "invoiceId",
+            "in": "path",
+            "type": "number",
+            "description": "Invoice ID",
+            "default": 1,
+            "required": true
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Amount of items to retrieve",
+            "type": "integer",
+            "default": 25
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Amount of items to skip",
+            "type": "integer",
+            "default": 0
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Field and order to sort field",
+            "type": "string",
+            "default": "price,desc"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Created",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Invoice"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "InvoiceProduct"
+        ],
+        "summary": "Add a new InvoiceProduct to the collection",
+        "description": "",
+        "parameters": [
+          {
+            "name": "invoiceId",
+            "in": "path",
+            "type": "number",
+            "description": "Invoice ID",
+            "default": 1,
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "InvoiceProduct that needs to be added",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/InvoiceProduct"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/InvoiceProduct"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/invoices/{invoiceId}/products/{productId}": {
+      "get": {
+        "tags": [
+          "InvoiceProduct"
+        ],
+        "summary": "Get a single InvoiceProduct",
+        "parameters": [
+          {
+            "name": "invoiceId",
+            "in": "path",
+            "type": "number",
+            "description": "Invoice ID",
+            "default": 1,
+            "required": true
+          },
+          {
+            "name": "productId",
+            "in": "path",
+            "type": "number",
+            "description": "Product ID",
+            "default": 1,
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/InvoiceProduct"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "InvoiceProduct"
+        ],
+        "summary": "Update a single InvoiceProduct",
+        "parameters": [
+          {
+            "name": "invoiceId",
+            "in": "path",
+            "type": "string",
+            "description": "Invoice ID",
+            "default": 1,
+            "required": true
+          },
+          {
+            "name": "productId",
+            "in": "path",
+            "type": "number",
+            "description": "Product ID",
+            "default": 1,
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Invoice that needs to be updated",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/InvoiceProduct"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK - Updated resource",
+            "schema": {
+              "$ref": "#/definitions/InvoiceProduct"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "InvoiceProduct"
+        ],
+        "summary": "Remove InvoiceProduct from collection",
+        "parameters": [
+          {
+            "name": "invoiceId",
+            "in": "path",
+            "type": "string",
+            "description": "Invoice ID",
+            "default": 1,
+            "required": true
+          },
+          {
+            "name": "productId",
+            "in": "path",
+            "type": "number",
+            "description": "Product ID",
+            "default": 1,
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Product": {
+      "type": "object",
+      "required": [
+        "name",
+        "price"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "example": 1
+        },
+        "name": {
+          "type": "string",
+          "example": "Sony Vaio VPCS120FL"
+        },
+        "price": {
+          "type": "integer",
+          "example": 5.4
+        },
+        "tags": {
+          "type": "array",
+          "example": [
+            "Computer"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "created_at": {
+          "type": "string",
+          "description": "ISO 8106",
+          "example": "2017-05-23T21:20:20+04"
+        },
+        "updated_at": {
+          "type": "string",
+          "description": "ISO 8106",
+          "example": "2017-05-23T21:20:20+04"
+        }
+      }
+    },
+    "Invoice": {
+      "type": "object",
+      "required": [
+        "code",
+        "status",
+        "customer",
+        "discount",
+        "tax",
+        "total"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "example": 1
+        },
+        "code": {
+          "type": "string",
+          "example": "IV001"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "PAID",
+            "PENDING",
+            "CANCELED"
+          ]
+        },
+        "customer": {
+          "type": "string",
+          "example": "Pierce"
+        },
+        "discount": {
+          "type": "number",
+          "example": 0
+        },
+        "tax": {
+          "type": "number",
+          "example": 1.5
+        },
+        "total": {
+          "type": "number",
+          "example": 15
+        },
+        "created_at": {
+          "type": "string",
+          "description": "ISO 8106",
+          "example": "2017-05-23T21:20:20+04"
+        },
+        "updated_at": {
+          "type": "string",
+          "description": "ISO 8106",
+          "example": "2017-05-23T21:20:20+04"
+        }
+      }
+    },
+    "InvoiceProduct": {
+      "type": "object",
+      "required": [
+        "product_id",
+        "price",
+        "quantity"
+      ],
+      "properties": {
+        "invoice_id": {
+          "type": "number",
+          "example": 5
+        },
+        "product_id": {
+          "type": "number",
+          "example": 18
+        },
+        "price": {
+          "type": "number",
+          "example": 6.11
+        },
+        "quantity": {
+          "type": "number",
+          "example": 2
+        }
+      }
+    },
+    "ErrorResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "number",
+          "description": "HTTP Response Status Code"
+        },
+        "developerMessage": {
+          "type": "string",
+          "description": "Verbose description of error"
+        },
+        "userMessage": {
+          "type": "string",
+          "description": "Brief descripcion that can be displayed to the end-user"
+        },
+        "errorCode": {
+          "type": "string",
+          "description": "Error unique identifier"
+        },
+        "moreInfo": {
+          "type": "string",
+          "description": "URL to documentation related to the error"
+        }
+      }
+    }
+  }
+}
