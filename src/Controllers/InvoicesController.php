@@ -147,8 +147,6 @@ class InvoicesController extends BaseController
                 'sortOrder' => $sortOrder,
             ];
 
-            $logger->info('params', $params);
-
             $results = $model->collection($params);
 
             return $response->withJson([
