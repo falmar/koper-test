@@ -67,7 +67,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Created",
+            "description": "OK",
             "schema": {
               "type": "array",
               "items": {
@@ -107,7 +107,7 @@
           }
         ],
         "responses": {
-          "200": {
+          "201": {
             "description": "Created",
             "schema": {
               "$ref": "#/definitions/Product"
@@ -266,7 +266,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Created",
+            "description": "OK",
             "schema": {
               "type": "array",
               "items": {
@@ -306,7 +306,7 @@
           }
         ],
         "responses": {
-          "200": {
+          "201": {
             "description": "Created",
             "schema": {
               "$ref": "#/definitions/Invoice"
@@ -482,7 +482,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Created",
+            "description": "OK",
             "schema": {
               "type": "array",
               "items": {
@@ -530,7 +530,7 @@
           }
         ],
         "responses": {
-          "200": {
+          "201": {
             "description": "Created",
             "schema": {
               "$ref": "#/definitions/InvoiceProduct"

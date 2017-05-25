@@ -41,30 +41,31 @@ $app->options('*', function (\Slim\Http\Request $request, \Slim\Http\Response $r
     return $response;
 });
 
-// Products
-$app->get('/products', \KoperTest\Controllers\ProductsController::class . ':collection');
-$app->get('/products/{id}', \KoperTest\Controllers\ProductsController::class . ':get');
-$app->post('/products', \KoperTest\Controllers\ProductsController::class . ':add');
-$app->put('/products/{id}', \KoperTest\Controllers\ProductsController::class . ':update');
-$app->delete('/products/{id}', \KoperTest\Controllers\ProductsController::class . ':delete');
+$app->group('/v1', function () use ($app) {
+    // Products
+    $app->get('/products', \KoperTest\Controllers\ProductsController::class . ':collection');
+    $app->get('/products/{id}', \KoperTest\Controllers\ProductsController::class . ':get');
+    $app->post('/products', \KoperTest\Controllers\ProductsController::class . ':add');
+    $app->put('/products/{id}', \KoperTest\Controllers\ProductsController::class . ':update');
+    $app->delete('/products/{id}', \KoperTest\Controllers\ProductsController::class . ':delete');
 
-// Invoice
-$app->get('/invoices', \KoperTest\Controllers\InvoicesController::class . ':collection');
-$app->get('/invoices/{id}', \KoperTest\Controllers\InvoicesController::class . ':get');
-$app->post('/invoices', \KoperTest\Controllers\InvoicesController::class . ':add');
-$app->put('/invoices/{id}', \KoperTest\Controllers\InvoicesController::class . ':update');
-$app->delete('/invoices/{id}', \KoperTest\Controllers\InvoicesController::class . ':delete');
+    // Invoice
+    $app->get('/invoices', \KoperTest\Controllers\InvoicesController::class . ':collection');
+    $app->get('/invoices/{id}', \KoperTest\Controllers\InvoicesController::class . ':get');
+    $app->post('/invoices', \KoperTest\Controllers\InvoicesController::class . ':add');
+    $app->put('/invoices/{id}', \KoperTest\Controllers\InvoicesController::class . ':update');
+    $app->delete('/invoices/{id}', \KoperTest\Controllers\InvoicesController::class . ':delete');
 
-// Invoice
-$app->get('/invoices/{invoiceId}/products',
-    \KoperTest\Controllers\InvoiceProductsController::class . ':collection');
-$app->get('/invoices/{invoiceId}/products/{productId}',
-    \KoperTest\Controllers\InvoiceProductsController::class . ':get');
-$app->post('/invoices/{invoiceId}/products', \KoperTest\Controllers\InvoiceProductsController::class . ':add');
-$app->put('/invoices/{invoiceId}/products/{productId}',
-    \KoperTest\Controllers\InvoiceProductsController::class . ':update');
-$app->delete(
-    '/invoices/{invoiceId}/products/{productId}',
-    \KoperTest\Controllers\InvoiceProductsController::class . ':delete'
-);
-
+    // Invoice
+    $app->get('/invoices/{invoiceId}/products',
+        \KoperTest\Controllers\InvoiceProductsController::class . ':collection');
+    $app->get('/invoices/{invoiceId}/products/{productId}',
+        \KoperTest\Controllers\InvoiceProductsController::class . ':get');
+    $app->post('/invoices/{invoiceId}/products', \KoperTest\Controllers\InvoiceProductsController::class . ':add');
+    $app->put('/invoices/{invoiceId}/products/{productId}',
+        \KoperTest\Controllers\InvoiceProductsController::class . ':update');
+    $app->delete(
+        '/invoices/{invoiceId}/products/{productId}',
+        \KoperTest\Controllers\InvoiceProductsController::class . ':delete'
+    );
+});

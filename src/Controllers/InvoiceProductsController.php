@@ -11,6 +11,8 @@ namespace KoperTest\Controllers;
 
 
 use KoperTest\Models\InvoiceProductsModel;
+use KoperTest\Models\InvoicesModel;
+use KoperTest\Models\ProductsModel;
 use Monolog\Logger;
 use Psr\Container\ContainerInterface;
 use Slim\Http\Request;
@@ -244,13 +246,28 @@ class InvoiceProductsController extends BaseController
         }
 
         try {
-            $now                   = (new \DateTime())->format(\DateTime::ATOM);
-            $invoice['created_at'] = $now;
-            $invoice['updated_at'] = $now;
+            $productId    = $invoice['product_id'];
+            $invoiceModel = new InvoicesModel($this->container);
+            $productModel = new ProductsModel($this->container);
+
+            $existentInvoice = $invoiceModel->get($invoiceId);
+            $existentProduct = $productModel->get($productId);
+
+            if (!count($existentInvoice) || !count($existentProduct)) {
+                return $response->withStatus(500)->withJson([
+                    'status'           => 500,
+                    'developerMessage' => "InvoiceProduct ({$invoiceId}, {$productId}) does not exist. Due to database capabilities new row can't be added.",
+                    'userMessage'      => 'Unexpected error has occurred, try again later.',
+                    'errorCode'        => '',
+                    'moreInfo'         => ''
+                ]);
+            }
+
+            $invoice['invoice_id'] = $invoiceId;
 
             $model = new InvoiceProductsModel($this->container);
             $model->add($invoice);
-            $invoice = $model->get($invoiceId, $invoice['invoice_id']);
+            $invoice = $model->get($invoiceId, $invoice['product_id']);
 
             return $response->withJson($invoice)->withStatus(201);
         } catch (\Error $e) {
@@ -334,10 +351,14 @@ class InvoiceProductsController extends BaseController
         }
 
         try {
+            $invoiceModel    = new InvoicesModel($this->container);
+            $productModel    = new ProductsModel($this->container);
             $model           = new InvoiceProductsModel($this->container);
-            $existentInvoice = $model->get($invoiceId, $productId);
+            $existentInvoice = $invoiceModel->get($invoiceId);
+            $existentProduct = $productModel->get($productId);
+            $existentIP      = $model->get($invoiceId, $productId);
 
-            if (!count($existentInvoice)) {
+            if (!count($existentInvoice) || !count($existentProduct) || !count($existentIP)) {
                 return $response->withStatus(500)->withJson([
                     'status'           => 500,
                     'developerMessage' => "InvoiceProduct ({$invoiceId}, {$productId}) does not exist. Due to database capabilities new row can't be added.",
@@ -346,9 +367,6 @@ class InvoiceProductsController extends BaseController
                     'moreInfo'         => ''
                 ]);
             }
-
-            $now                          = (new \DateTime())->format(\DateTime::ATOM);
-            $invoiceProduct['updated_at'] = $now;
 
             $model->update($invoiceId, $productId, $invoiceProduct);
 
